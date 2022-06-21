@@ -1,0 +1,16 @@
+
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+The LCT corpus annotated eligibility criteria and text documents can be found on FigShare at \url{https://figshare.com/s/ebcbbd44ce2c1626f606}. Code for pre-annotation and analysis are available at \url{https://github.com/uw-bionlp/clinical-trials-gov-data}. The LCT corpus is annotated using the Brat "standoff" format. The Brat format includes two file types, ".txt" files and ".ann" files. \\
+
+\subsection*{Text (.txt) files}
+The free-text eligibility criteria information in the 1,006 documents of the LCT corpus. Each file is named using the "NCT" identifier used by \url{https://clinicaltrials.gov}. \\
+
+\subsection*{Annotation (.ann) files}
+The annotation files used by Brat for tracking annotated spans of text and relations. Each .ann file corresponds to a .txt file of the same name. Each row of a .ann file may begin with a "T" (for an entity) or "R" (for a relation), followed by an incremental number for uniquely identifying the entity or relation (e.g., "T15"). "T" rows are of the form "T<number> <entity type> <start character index> <stop character index>", where start and stop indices correspond to text in the associated .txt file. "R" rows are of the form "R<number> <relation type> Arg1:<ID> Arg2:<ID>", where ID values correspond to identifiers of entities. Additionally, for ease of annotation certain LCT relations are defined as arguments of Brat "events", identified by "E". "E" rows are of the form "E<number> <entity type>:<ID> <relation type>:<ID>". \\
+
+\noindent More information on the Brat format can be found at \url{https://brat.nlplab.org/standoff.html}. \\
+
+\end{document}

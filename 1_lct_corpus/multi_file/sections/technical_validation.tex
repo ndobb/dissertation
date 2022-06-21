@@ -1,0 +1,118 @@
+
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\subsection*{Inter-annotator agreement}
+\noindent Inter-annotator agreement was calculated using F\textsubscript{1} scoring for entities and relations with 20 double-annotated documents. Entity annotations were considered matching only if entity types and token start and end indices matched exactly. Relations annotations were similarly considered matching only if relation type and token start and end indices of both the subject and target matched exactly. \\
+
+\noindent Initial inter-annotator agreement using the 20 training documents was 76.1\% for entities and 60.3\% for relations. Inter-annotator agreement improved slightly to 78.1\% (+2\%) for entities and 60.9\% (+0.6\%) for relations in the 99 additional double-annotated documents, indicating reasonably high annotator agreement considering the complexity of the annotation task. \\
+
+\noindent We found two categories of annotation differences in double-annotated eligibility criteria. First, in spans such as:
+
+\begin{quote} 
+\centering 
+\textit{"Reported being a daily smoker"}
+\end{quote} \\
+
+\noindent While both annotators tended to annotate "smoker" as both a \textit{Condition} and \textit{Condition-Name}, adjectives such as "daily" were often annotated as \textit{Eq-Comparison} and \textit{Eq-Temporal-Unit[day]} by one annotator and \textit{Stability[stable]} by the other. After review, these were generally reconciled to the first pattern. \\
+
+\noindent The second category of differences can be seen in spans such as "CDI Diarrhea", where "CDI" refers to Clostridium Difficile Infection. In these cases, the annotators may annotate this span as (omitting \textit{Condition-Name} entities for brevity):
+
+\begin{center}
+\begin{tabular}{l c c c}
+    (1) & "CDI" & & "Diarrhea" \\ 
+    & \big\downarrow & & \big\downarrow \\
+    & \textit{Condition} & \xleftarrow[Caused-By]{} & \textit{Condition} \\
+\end{tabular}
+\end{center} \\ \\
+
+\begin{center}
+    or
+\end{center}
+
+\begin{center}
+\begin{tabular}{l c}
+    (2) & "CDI Diarrhea" \\ 
+    & \big\downarrow \\
+    & \textit{Condition} \\
+\end{tabular}
+\end{center} \\ \\
+
+\noindent The first annotation separates "CDI" and "Diarrhea" into two entities, with "Diarrhea" \textit{Caused-By} "CDI", while the second annotation treats them as a single entity. Reconciliation in these cases was done by referring to the UMLS Metathesaurus to determine whether the combined span existed as a single concept within the UMLS. As "Clostridium Difficile Diarrhea" exists as a UMLS concept (C0235952), the annotations in this example were reconciled to use the second, multi-span entity. 
+
+\subsection*{Baseline prediction}
+\noindent To evaluate baseline predictive performance on the LCT corpus, we first created a randomly assigned 80/20 split of the corpus, with 804 documents used for the training set and 202 for the test set. For entity prediction, we trained NER models using biLSTM+CRF and BERT \cite{devlin2018bert} neural architectures. For BERT-based prediction, we used two pretrained models trained on published medical texts, SciBERT \cite{beltagy2019scibert} and PubMedBERT \cite{gu2021domain}. For both biLSTM+CRF and BERT predictions, we trained one model to predict general entities and another for fine-grained entities. \\
+
+\noindent For relation extraction, we evaluated SciBERT for sequence classification as well as a modified BERT architecture, R-BERT, following methods developed by Wu \& He \cite{wu2019enriching}, also using the pretrained SciBERT model. Table \ref{tbl_hyperparams} shows hyperparameters used for each task. \\
+
+\def\arraystretch{1.2}
+\begin{table}[h!]
+\begin{tabular}{m{4cm} m{3cm} m{5cm} m{3cm}}
+%\begin{table}
+ \toprule
+ \textbf{Task} & \textbf{Architecture} & \textbf{Hyperparameter / Embeddings} & \textbf{Training Value} \\
+ \hline
+    \multirow{4}{}{\mbox{Named Entity Recognition}} &
+    \multirow{4}{}{\mbox{biLSTM+CRF}} 
+    %Named Entity Recognition
+        & Character Dimensions & 25 \\
+        & & Token Embedding Dimensions & 100 \\
+        & & Learning Rate & 0.005 \\
+        & & Dropout & 0.5 \\
+        & & Pretrained Embeddings & GloVe \cite{pennington2014glove} \\
+    \hline
+    \multirow{2}{}{\mbox{Relation Extraction}} &
+    \multirow{2}{}{\mbox{BERT \& R-BERT}} 
+        & Pretrained Model & SciBert  \\
+        & & Learning Rate & 0.00003 \\
+ \hline
+\end{tabular}
+\caption{Hyperparameters and pre-trained embeddings used for named entity recognition and relation extraction baseline results. For the NER task, the same architecture and hyperparameters were used for both general and fine-grained entity models. For the relation extraction task, the same hyperparameters were used with both the BERT and R-BERT architectures.}
+\label{tbl_hyperparams}
+\end{table}
+
+\noindent  We achieved the highest micro-averaged F\textsubscript{1} score of 81.3\% on entities using SciBERT and 85.2\% on relations using the R-BERT architecture with SciBERT. Results of representative entities and relations are shown in Tables \ref{entity_f1} and \ref{relation_f1}. \\
+
+\begin{table}[tp]
+    \input{tables/entity_f1.tex}
+    \caption{\textbf{Baseline entity prediction scores (\%, Precision / Recall / F\textsubscript{1}).} Corpus-level micro-averaged scores are shown in the bottom row. For brevity a representative sample of entities is shown. \textit{Count} refers to the total count of unique spans annotated in the entire corpus. Entities included in the total count and scores but omitted for brevity are \textit{Acuteness, Allergy, Condition-Type, Code, Coreference, Ethnicity, Eq-Operator, Eq-Unit, Indication, Immunization, Insurance, Life-Stage-And-Gender, Organism, Other, Specimen, Study and Provider}.}
+    \label{entity_f1}
+\end{table}
+
+\begin{table*}
+    \centering
+    \input{tables/relation_f1.tex}
+    \caption{\textbf{Baseline relation prediction scores (\%, Precision / Recall / F\textsubscript{1}).} Corpus-level micro-averaged scores are shown in the bottom row. For brevity a representative sample of relations is shown. \textit{Count} refers to the total count annotated in the entire corpus, including relations not shown. The count total excludes general to fine-grained entity relations, which as overlapping spans are not used for relation prediction. Relations included in the total count and scores but omitted for brevity are \textit{Acuteness, Code, Criteria, Except, From, Indication-For, Is-Other, Max-Value, Min-Value, Polarity, Provider, Refers-To, Specimen, Stage, Study-Of and Type}.}
+    \label{relation_f1}
+\end{table*}
+
+\noindent Among entities, we found two particular categories performed relatively well with F\textsubscript{1} scores of 70\% or often greater: (1) Entities which are syntactically varied but occurred relatively frequently in eligibility descriptions, such as \textit{Condition}, \textit{Procedure}, and \textit{Eq-Comparison}, (2) Entities which sometimes occurred less frequently but with greater relative syntactic consistency and structure, such as \textit{Age}, \textit{Contraindication}, and \textit{Birth}. Entities which occurred very infrequently, such as \textit{Death} tended to have both low precision and recall. \\
+
+\noindent For relations, we found the most frequently occurring relations, such as \textit{Eq-Comparison}, \textit{Temporality}, \textit{Modifies}, and \textit{Example-Of} to perform well, with F\textsubscript{1} scores greater than 85\%. Among less frequently occurring relations, we found a number of cases where relations which tend to occur in similar positions within sentences and grammatical structures were frequently mistaken during prediction. For example, \textit{Eq-Comparison} (e.g., "greater than 40") and \textit{Minimum-Count} (e.g., "at least twice") were sometimes incorrectly predicted. We found similar incorrect predictions for relations such as \textit{Treatment-For} (e.g., "Surgery for malignant pathology") and \textit{Using} (e.g., "knee joint replacement with general anaesthesia"). \\
+
+\noindent In future work we intend to examine approaches improving prediction of less frequently occurring entities and relations. A full listing of baseline prediction results can be found with the annotation guidelines at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki/Named-Entity-Recognition-and-Relation-Extraction-performance}. \\
+
+\subsection*{Annotation quality evaluation}
+\noident To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents. \\
+
+\def\arraystretch{1.2}
+\begin{table}[h!]
+\centering
+\begin{tabular}{l l c c c}
+ \toprule
+ \textbf{Training Set} & \textbf{Test Set} & \textbf{Precision} & \textbf{Recall} & \textbf{F\textsubscript{1}} \\
+ \hline
+    Manual & Semi-automated & 75.4 & 82.1 & 78.6 \\
+    Semi-automated & Manual & 80.1 & 79.9 & 80.0 \\
+ \hline
+\end{tabular}
+\caption{\textbf{Results of NER experiments using the manually annotated and semi-automated portions of the corpus.} The manually annotated portion includes 513 documents while the semi-automatically annotated portion is 493 documents.}
+\label{tbl_manual_semiauto}
+\end{table}
+
+\noindent As the latter near-half (493 documents) of the LCT corpus was automatically annotated, then manually corrected, we also evaluated the quality of the manually annotated portion versus the semi-automatically annotated portion to ensure consistency. We first trained NER models with SciBERT using the manually annotated portion and tested on the semi-automated portion, then reversed the experiment and trained on the semi-automated portion and tested on the manually annotated portion. Results are shown in Table \ref{tbl_manual_semiauto}. \\
+
+\noindent Results of the experiments when training on both the manually and semi-automatically annotated halves of the corpus show comparable results, with the greatest difference being in precision, with the manual annotation-trained model performing slightly worse (-4.7\%) in prediction versus the semi-automated annotation-trained model. Overall F\textsubscript{1} scores were similar at 78.6\% and 80.0\%, suggesting reasonable consistency across the corpus.
+
+\end{document}

@@ -1,0 +1,95 @@
+\documentclass[fleqn,10pt]{wlscirep}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lineno}
+\usepackage[numbers]{natbib}
+\usepackage{subfiles}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{mathtools}
+%\usepackage{graphicx}
+\usepackage{changepage}
+\usepackage{caption}
+\usepackage{multirow}
+%\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{amsmath}
+
+\usepackage{makecell}
+
+\usepackage[math]{cellspace}
+\usepackage{tikz}
+%\titlespacing*{\subsection}
+%{0pt}{1\baselineskip}{0.6\baselineskip}
+%\setlength\FullWidth{\textwidth}
+%\usepackage{multirow}
+%\usepackage{array}
+%\usepackage{hyphenat}
+%\usepackage{subcaption}
+%\usepackage{adjustbox}
+%\usepackage{enumitem}
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-\do\_}
+\usepackage{colortbl}
+\linenumbers
+
+\title{The Leaf Clinical Trials Corpus: a new resource for query generation from clinical trial eligibility criteria}
+
+\author[1,*]{Nicholas J Dobbins}
+\author[2]{Tony Mullen}
+\author[3]{Özlem Uzuner}
+\author[1]{Meliha Yetisgen}
+\affil[1]{Department of Biomedical Informatics \& Medical Education, University of Washington, Seattle, WA, USA}
+\affil[2]{Khoury College of Computer Science, Northeastern University, Seattle, WA, USA}
+\affil[3]{Department of Information Sciences and Technology, George Mason University, Fairfax, VA, USA}
+\affil[*]{corresponding author(s): (ndobb@uw.edu)}
+
+\begin{abstract}
+\noindent
+\subfile{sections/abstract}
+\end{abstract}
+\begin{document}
+https://www.overleaf.com/project/6067abbac2db801bb721ca91
+\flushbottom
+\maketitle
+
+\section*{Background \& Summary}
+\label{sec:background_and_summary}
+\subfile{sections/background_and_summary}
+
+\section*{Methods}
+\label{sec:methods}
+\subfile{sections/methods}
+
+\section*{Data Records}
+\label{sec:data_records}
+\subfile{sections/data_records}
+
+\section*{Technical Validation}
+\label{sec:technical_validation}
+\subfile{sections/technical_validation}
+
+\section*{Usage Notes}
+\label{sec:usage_notes}
+\subfile{sections/usage_notes}
+
+\section*{Code availability}
+\label{sec:code_availability}
+\subfile{sections/code_availability}
+
+\section*{Acknowledgements} 
+
+This study was supported in part by the National Library of Medicine under Award Number R15LM013209 and by the National Center for Advancing Translational Sciences of National Institutes of Health under Award Number UL1TR002319. Experiments were run on computational resources generously provided by the UW Department of Radiology.
+
+\section*{Author contributions statement}
+
+ND created the annotation guidelines, was primary annotator, and drafted the original manuscript. TM served as secondary annotator and reviewed and revised the manuscript. ̈OU reviewed the task and goals as well as reviewed and revised the manuscript. MY conceived of the annotation task, supervised, and reviewed and revised the manuscript.
+
+\section*{Competing interests}
+
+The authors declare no competing interests.
+
+\bibliography{sample}
+
+\end{document}
