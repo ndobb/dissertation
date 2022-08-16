@@ -1,0 +1,119 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NIH Grant Proposal for the Specific Aims and Research Plan Sections
+% LaTeX Template
+% Version 1.1 (26/12/19)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Erick Tatro (erickttr@gmail.com) with modifications by:
+% Vel (vel@latextemplates.com)
+%
+% Adapted from:
+% J. Hrabe (http://www.magalien.com/public/nih_grants_in_latex.html)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt]{article} % Default font size and suppress title page
+\usepackage{subfiles}
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+% A note on fonts: As of 2019, NIH allows Arial, Georgia, Helvetica, and Palatino Linotype. Georgia and Arial are commercial fonts so you will need to use XeLaTeX and have them installed on your machine to use them. Palatino & Helvetica are available as free LaTeX packages so select the one you want and comment out the other.
+%\usepackage{palatino} % Palatino font
+\linespread{1.05} % A little extra line spread is better for the Palatino font
+\usepackage{helvet} % Helvetica font
+%\renewcommand*\familydefault{\sfdefault} % Use the sans serif version of the font
+
+\usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
+\usepackage{graphicx} % Required for including images
+\usepackage{booktabs} % Nice rules in tables
+\usepackage{wrapfig} % Required for text to wrap around figures and tables
+\usepackage[labelfont=bf]{caption} % Make figure numbering in captions bold
+\usepackage[top=0.5in,bottom=0.5in,left=0.5in,right=0.5in]{geometry} % Page margins
+\pagestyle{empty} % Suppress headers and footers
+
+\hyphenation{ionto-pho-re-tic iso-tro-pic fortran} % Specifies custom hyphenation points for words or words that shouldn't be hyphenated at all
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        \begin{huge}
+            \textbf{Cohort discovery and stuff}
+        \end{huge} \\
+        \vspace{0.7cm}
+        Nicholas J. Dobbins \\
+        Department of Biomedical Informatics and Medical Education \\
+        School of Medicine, University of Washington \\
+        Seattle, Washington. United States \\
+        \vspace{0.7cm}
+        Committee Members \\
+        Meliha Yetisgen, PhD (Chair) \\
+        H. Nina Kim, MD, MSc \\
+        Trevor Cohen, MBChB, PhD \\
+        Fei Xia, PhD (Graduate School Representative) \\
+        \vspace{0.7cm}
+        General Exam Data: November 10, 2022
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Specific Aims}
+\label{sec:specific_aims}
+\subfile{Sections/1_specific_aims}
+\newpage
+
+\section{Background and Significance}
+\label{sec:background}
+\subfile{Sections/2_background}
+
+\section{Related Work}
+\label{sec:related_work}
+\subfile{Sections/3_related_work}
+
+\section{Task Innovation}
+\label{sec:task_innovation}
+\subfile{Sections/4_task_innovation}
+
+\section{Research Plan}
+\label{sec:research_plan}
+\subfile{Sections/5_research_plan_aim1}
+\subfile{Sections/5_research_plan_aim2}
+\subfile{Sections/5_research_plan_aim3}
+
+\section{Timeline}
+\label{sec:timeline}
+\subfile{Sections/6_timeline}
+
+\section{Summary}
+\label{sec:summary}
+\subfile{Sections/7_summary}
+
+\section{Acknowledgements}
+\label{sec:acknowledgements}
+\subfile{Sections/8_acknowledgements}
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\newpage
+
+\bibliography{main} % Use the NIHGrant.bib file for the reference list, replace with your own
+\bibliographystyle{nihunsrt} % Use the custom nihunsrt bibliography style included with the template
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
