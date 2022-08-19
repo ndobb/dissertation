@@ -1,0 +1,90 @@
+ 
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\subsection*{System Architecture}
+
+The LeafAI query engine was designed using a modular, micro service-based architecture with a central API (Application Program Interface) which orchestrates end-to-end query generation. Inter-module communication is performed using gRPC \cite{grpc}, a robust open-source remote procedure call framework which enables language-agnostic service integration. This allows individual modules to be implemented (and substituted) in programming languages and using libraries well-suited to a given task. A diagram of the LeafAI query engine architecture is shown in Figure \ref{fig_leafai_architecture}. 
+
+\begin{figure}[h]
+  \includegraphics[scale=0.6]{figures/leafai_architecture.pdf}  
+\caption{LeafAI query architecture. Inter-module communication is performed using the gRPC framework. Individual modules are deployed as Docker \cite{docker} containers and communicate solely with the central API, which orchestrates query generation and handles query generation requests.}
+\label{fig_leafai_architecture}
+\end{figure}
+
+\noindent At a high level, query generation is performed in the following steps:
+
+\begin{enumerate}
+    \item{A query request is received by the API in the form of inclusion and exclusion criteria as free-text strings.}
+    \item{The input texts are tokenized and named entity recognition is performed to determine spans of text representing conditions, procedures, and so on.}
+    \item{Relation extraction is performed to determine relations between the entities, such as \textit{Caused-By} or \textit{Numeric-Filter}.}
+    \item{The input texts are transformed by replacing spans of "raw" text with logical form names. For example, "Diagnosed with diabetes" would become "Diagnosed with cond("diabetes")." The resulting input texts are in turn transformed into an output logical representation using a Sequence to Sequence (Seq2Seq) architecture, in the form of a string.}
+    \item{A logical form interpreter module implemented as a recursive descent parser \cite{johnstone1998generalised} reads the logical form string input and instantiates it as an abstract syntax tree (AST) of nested in-memory logical form objects.}
+    \item{"Named" logical form objects (i.e., specified with quoted text, such as "lab("hemoglobin A1c")") are normalized into one or more corresponding UMLS concepts.}
+    \item{Working recursively inside-to-outside the AST structure, each logical form object calls a \textit{Reason()} method which executes various rules depending on context.}
+    \item{Each reasoning rule is performed as one or more pre-defined SPARQL queries to the knowledge base (KB), concept by concept.}
+    \item{The final normalized, reasoned, logical form AST is thus a nested structure of UMLS concepts. Each AST criterion is mapped to zero or more corresponding entries in the semantic metadata mapping (SMM), which in turn lists meanings, roles, and relations of a database schema in the form of UMLS concepts.}
+    \item{The final mapped AST object is transformed into a series of database queries, one per line of eligibility criteria text. The output SQL query can either be executed directly on a database or returned to the API caller.}
+\end{enumerate}
+
+\noindent Figure \ref{fig_leafai_querygen} illustrates an example of this process. In the following subsections we examine these steps in detail.
+
+\begin{figure}[h]
+  \includegraphics[scale=0.47]{figures/leafai_flow.pdf}  
+\caption{LeafAI query generation processes}
+\label{fig_leafai_querygen}
+\end{figure}
+
+\subsection*{Named entity recognition and relation extraction}
+
+\noindent Named entity recognition (NER) refers to the segmentation and identification of tokens within an input sentence as "entities", such as conditions or procedures. We used the Leaf Clinical Trials (LCT) corpus \cite{dobbins2022leaf} to train two BERT-based \cite{devlin2018bert} NER extractors, one each for LCT general- and fine-grained-entities (see \cite{dobbins2022leaf} for more information on LCT entity types). Next, relation extraction between named entity pairs is performed using a BERT-based model also trained on the LCT corpus.
+
+\subsection*{Intermediate logical transformation of eligibility criteria}
+
+\noindent One of the core challenges of generating queries for eligibility criteria is the problem of logical representation. Works such as Criteria2Query \cite{yuan2019criteria2query} normalize and subsequently generate queries directly based on named entities and relations, which while practical, may perform poorly in cases of nested or complex logic. An alternative to this approach is to use a so-called intermediate representation (IR), which transforms the original natural language input by removing "noise" unnecessary to a given task and which more logically represents underlying semantics (see Herzig \textit{et al} \cite{herzig2021unlocking} for an examination of IR-based SQL generation approaches). Similar to earlier discussed work using Description Logics, Roberts and Demner-Fushman \cite{roberts2016annotating} proposed a representation of questions on EHR databases using a comparatively compact but generalizable format using first order logic expressions, for example, representing "Is she wheezing this morning?" as
+
+\begin{quote}
+    \centering
+    $\delta( \lambda x.has\_problem(x, C0043144, status) \wedge time\_within(x, \mathrm{"this\ morning"}))$
+\end{quote}
+
+\noindent This style of representation is powerfully generalizable, but also difficult to translate directly into SQL statements as multiple predicates (e.g., \textit{has\_problem} and \textit{time\_within}) may actually correspond to one or multiple SQL statements, depending on context.
+
+\noindent We thus chose a similar intermediate representation (hereafter simply "logical forms") as proposed by Roberts and Demner-Fushman but more closely resembling a nested functional structure in programming languages such as Python or JavaScript and more easily amenable to SQL generation. A criterion such as "Diabetic women and men over age 65" would be represented by our logical forms as
+
+\begin{quote}
+$intersect( \\
+    \mathrm{\ \ \ \ }cond("Diabetic"), \\
+    \mathrm{\ \ \ \ }union(female(), male()),\\
+    \mathrm{\ \ \ \ }age().num\_filter(eq(op(GT), val("65"))) \\
+)$
+\end{quote}
+
+\noindent A description of our logical forms annotation schema, corpus, annotation process, and performance metrics can be found in Appendix A. \\
+
+\noindent After named entity recognition and relation extraction are performed, we leverage T5 \cite{raffel2020exploring}, a state-of-the-art Seq2Seq architecture we fine-tuned for predicting logical forms. As inputs to the Seq2Seq model we use the original eligibility criteria with named entity spans replaced by logical form representations, as we found this to significantly improve performance compared to training with raw inputs without named entities. Thus the above example would be transformed to the input string
+
+\begin{quote}
+    \centering
+    $\textit{"cond(“Diabetic”) female() and male() over age() eq(op(GT), val(“65”))"}$
+\end{quote}
+
+\noindent The returned logical form string is then instantiated into an abstract syntax tree (AST) of nested in-memory logical form objects using a recursive descent parser \cite{johnstone1998generalised} within the API.
+
+\subsection*{Concept normalization}
+
+\subsection*{Reasoning using an integrated knowledge base}
+
+\subsection*{Query generation using semantic metadata mapping}
+
+
+\begin{figure}[h]
+  \includegraphics[scale=0.53]{figures/leafai_smm.pdf}  
+\caption{The LeafAI query engine's SQL query generation process using two hypothetical database schema to generate queries for platelet counts (shown in logical form after normalization). This example illustrates the flexibility of LeafAI's semantic metadata mapping system in adapting to virtually any data model. On the left, "Tall Table Structure", platelet counts must be filtered from within a general purpose "labs" table. The LeafAI KB recognizes that labs may be stored as LOINC codes, and the corresponding SMM indicates that records in this table can be filtered to LOINC values. On the right, "Pivoted Table Structure", platelet counts are stored as a specific column in a "complete\_blood\_counts" table, and thus can be directly queried without further filtering. Additional metadata, columns, tables, types and so on needed in SMMs are omitted for brevity.}
+\label{fig_leafai_smm}
+\end{figure}
+
+\subsection*{Evaluation}
+
+\end{document}
