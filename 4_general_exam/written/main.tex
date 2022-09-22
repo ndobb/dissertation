@@ -42,7 +42,24 @@
 \hypersetup{%
     pdfborder = {0 0 0}
 }
-\pagestyle{empty} % Suppress headers and footers
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-\do\_}
+
+\usepackage{fancyhdr}
+% Turn on the style
+\pagestyle{fancy}
+% Clear the header and footer
+\fancyhead{}
+\fancyfoot{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}%
+
+\usepackage{amsmath}
+\usepackage{makecell}
+\usepackage[math]{cellspace}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{colortbl}
 
 \hyphenation{ionto-pho-re-tic iso-tro-pic fortran} % Specifies custom hyphenation points for words or words that shouldn't be hyphenated at all
 
@@ -71,8 +88,10 @@
 \end{titlepage}
 
 \tableofcontents
+\thispagestyle{empty}
 \newpage
-
+\addtocounter{page}{-1}
+ 
 \section{Specific Aims}
 \label{sec:specific_aims}
 \subfile{Sections/1_specific_aims}
@@ -90,23 +109,29 @@
 \label{sec:task_innovation}
 \subfile{Sections/4_task_innovation}
 
+\newpage
+
 \section{Research Plan}
 \label{sec:research_plan}
 \subfile{Sections/5_research_plan_aim1}
 \subfile{Sections/5_research_plan_aim2}
 \subfile{Sections/5_research_plan_aim3}
 
+\section{Study Limitations and Future Work}
+\label{sec:limitations}
+\subfile{Sections/6_limitations}
+
 \section{Timeline}
 \label{sec:timeline}
-\subfile{Sections/6_timeline}
+\subfile{Sections/7_timeline}
 
 \section{Summary}
 \label{sec:summary}
-\subfile{Sections/7_summary}
+\subfile{Sections/8_summary}
 
 \section{Acknowledgements}
 \label{sec:acknowledgements}
-\subfile{Sections/8_acknowledgements}
+\subfile{Sections/9_acknowledgements}
 
 
 %----------------------------------------------------------------------------------------

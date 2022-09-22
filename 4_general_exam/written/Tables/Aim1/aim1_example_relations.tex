@@ -1,0 +1,58 @@
+\begin{tabular}{m{3.8cm} m{2.2cm} m{10cm}}
+\toprule
+    \textbf{Category} & \textbf{Relation} & \textbf{Example Annotation} \\ \midrule
+    
+     & Abbrev-Of     & $\underset{Condition}{\underline{\mathrm{Post\ Concussion\ Syndrome}}}$ \quad $\xleftarrow[Abbrev-Of]{}$ \quad ($\underset{Condition}{\underline{\mathrm{PCS}}}$) \\
+        
+    Alt. and Examples & Equivalent-To & $\underset{Condition}{\underline{\mathrm{Thrombocytopenia}}}$ \quad $\xleftarrow[Equivalent-To]{}$ \quad $\underset{Observation[lab]}{\underline{\mathrm{platelets}}}$ \quad < 100 \\
+    
+     & Example-Of    & $\underset{Condition}{\underline{\mathrm{skin\ condition}}}$ \quad $\xleftarrow[Example-Of]{}$ \quad (e.g. \quad $\underset{Condition}{\underline{\mathrm{eczema}}}$ ) \\[2ex] 
+     
+    \hline
+     
+     Clinical & Contraindicates & conditions \quad  $\underset{Contraindication}{\underline{\mathrm{contraindicating}}}$ \quad $\xrightarrow[Contraindicates]{}$ \quad $\underset{Procedure}{\underline{\mathrm{MRI}}}$ \\[2ex] 
+    
+    \hline
+    
+    \multirow{4}{*}[-13pt]{\mbox{Dependent}} &
+        Caused-By     & $\underset{Observation}{\underline{\mathrm{swellings}}}$ \quad $\xrightarrow[Caused-By]{}$ \quad $\mathrm{due\ to}$ \quad $\underset{Condition}{\underline{\mathrm{trauma}}}$ \\    
+        
+     & Found-By      & $\underset{Observation}{\underline{\mathrm{lesion}}}$ \quad $\xrightarrow[Found-By]{}$ \quad $\mathrm{seen\ on\ standard}$ \quad $\underset{Procedure}{\underline{\mathrm{imaging}}}$ \\
+    
+     & Treatment-For & $\underset{Procedure}{\underline{\mathrm{coronary\ bypass\ surgery}}}$ \quad $\xrightarrow[Treatment-For]{}$ \quad $\mathrm{for}$ \quad $\underset{Condition}{\underline{\mathrm{atherosclerosis}}}$ \\
+    
+     & Using         & $\underset{Procedure}{\underline{\mathrm{total\ knee\ arthroplasty}}}$ \quad $\xrightarrow[Using]{}$ \quad $\mathrm{with}$ \quad  $\underset{Procedure}{\underline{\mathrm{spinal\ anesthesia}}}$ \\[2ex]
+    
+    \hline
+    
+    Logical &
+        If-Then       & BMI \quad $\underset{Eq-Comparison}{\underline{\mathrm{greater\ than\ 38}}}$ \quad $\xleftarrow[If-Then]{}$ \quad $\mathrm{for}$ \quad $\underset{Life-Stage-And-Gender[female]}{\underline{\mathrm{women}}}$ \\[2ex]
+         
+    \hline
+    
+         & Risk-For & $\underset{Risk}{\underline{\mathrm{risk}}}$ \quad $\xrightarrow[Risk-For]{}$ \quad $\mathrm{of}$ \quad $\underset{Death}{\underline{\mathrm{death}}}$ \\
+        Qualifier & Severity & $\underset{Severity[mild]}{\underline{\mathrm{mild}}}$ \quad $\xleftarrow[Severity]{}$ \quad $\underset{Observation}{\underline{\mathrm{symptoms}}}$ \\
+         & Stability & $\underset{Observation}{\underline{\mathrm{hemodynamically}}}$ \quad $\xrightarrow[Stability]{}$ \quad $\underset{Stability[change]}{\underline{\mathrm{unstable}}}$ \\[2ex]
+    
+    \hline
+    
+     &
+        After & $\underset{Condition}{\underline{\mathrm{infected}}}$ \quad $\xrightarrow[After]{}$ \quad $\mathrm{following}$ \quad $\underset{Encounter[inpatient]}{\underline{\mathrm{admission}}}$ \\
+        
+        & Before & $\mathrm{diagnosis of}$ $\underset{Condition}{\underline{\mathrm{aortic\ stenosis}}}$ \quad $\xrightarrow[Before]{}$ \quad $\mathrm{prior\ to}$ \quad $\underset{Encounter}{\underline{\mathrm{visit}}}$ \\
+        
+        & Duration & $\underset{Condition}{\underline{\mathrm{type\ 1\ diabetes}}}$ \quad $\xrightarrow[Duration]{}$ \quad $\mathrm{for}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{at\ least\ 1\ year}}}$ \\ 
+        Comparative & During & $\underset{Procedure}{\underline{\mathrm{mechanically \ ventilated}}}$ \quad $\xrightarrow[During]{}$ \quad $\mathrm{while}$ \quad $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ \\
+        
+         & Numeric-Filter & $\underset{Observation[vital]}{\underline{\mathrm{body\ weight}}}$ \quad $\xrightarrow[Numeric-Filter]{}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{less\ than\ 110\ pounds}}}$ \\    
+        
+         & Minimum-Count & $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ \quad $\xrightarrow[Minimum-Count]{}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{at\ least\ twice}}}$ \\    
+        
+         & Temporality & $\underset{Encounter}{\underline{\mathrm{seen}}}$ \quad $\xrightarrow[Temporality]{}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{within\ past\ 6\ months}}}$ \\[2ex]
+         
+    \hline
+    
+    Other &
+         Location & $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ \quad $\xrightarrow[Location]{}$ \quad $\mathrm{to\ the}$ \quad $\underset{Location[unit]}{\underline{\mathrm{ICU}}}$ \\[2ex]
+    
+\end{tabular}

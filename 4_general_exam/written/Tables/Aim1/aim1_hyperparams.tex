@@ -1,0 +1,20 @@
+\begin{tabular}{m{4cm} m{3cm} m{5cm} m{3cm}}
+%\begin{table}
+ \toprule
+ \textbf{Task} & \textbf{Architecture} & \textbf{Hyperparameter / Embeddings} & \textbf{Training Value} \\
+ \hline
+    \multirow{4}{*}{\mbox{Named Entity Recognition}} &
+    \multirow{4}{*}{\mbox{biLSTM+CRF}} 
+    %Named Entity Recognition
+        & Character Dimensions & 25 \\
+        & & Token Embedding Dimensions & 100 \\
+        & & Learning Rate & 0.005 \\
+        & & Dropout & 0.5 \\
+        & & Pretrained Embeddings & GloVe \cite{pennington2014glove} \\
+    \hline
+    \multirow{2}{*}{\mbox{Relation Extraction}} &
+    \multirow{2}{*}{\mbox{BERT \& R-BERT}} 
+        & Pretrained Model & SciBert  \\
+        & & Learning Rate & 0.00003 \\
+ \hline
+\end{tabular}
