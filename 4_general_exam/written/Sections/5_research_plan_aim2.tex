@@ -6,7 +6,7 @@
 
 In Aim 2 we focus on development and evaluation of methods for query generation and reasoning on eligibility criteria. We divide this aim into two sub-aims: (1) Development of a gold standard eligibility criteria logical forms corpus, and (2) Creation of methods for query generation utilizing the corpus in (1).
 
-\subsubsection{SubAim 1: Creation of a Criteria to Logical Form Gold Standard}
+\subsubsection{Sub-Aim 1: Creation of a Criteria to Logical Form Gold Standard}
 
 Query generation for LeafAI was originally envisioned as a system which generates queries using rules executed upon predicted named entities and relations in the form of graphs. In practice, we found this system to be difficult to manage given the need for ever more rules, as well as "brittle" given new criteria structures the system had not seen before, which in turn required the creation of additional rules.
 
@@ -33,13 +33,13 @@ We named the corpus produced from this sub-aim the Leaf Logical Forms (LLF) corp
 
 We also hypothesized that the performance of predicting logical forms could likely be improved by replacing "raw" tokens in each eligibility criteria with corresponding functions names derived from named entities from the LCT corpus. For example, given a raw input of \\
 
-'\textit{Diabetics who smoke}', \\
+"\textit{Diabetics who smoke}", \\
 
-\noindent we would replace the name entities for "Diabetics" and "smoke", outputting \\ 
+\noindent we would replace the named entities for "Diabetics" and "smoke", outputting \\ 
 
-'\textit{cond("Diabetics") who obs("smoke")}' \\
+\textit{cond("Diabetics") who obs("smoke")} \\
 
-\noindent using \textit{Condition} and \textit{Observation} named entity annotations in the LCT corpus. We call this substituted text an "augmented" eligibility criteria. The augmented criteria syntax reshapes named entities to more closely resemble expected logical form syntax and allows us to leverage the LCT corpus for logical form transformation.
+\noindent using \textit{Condition} and \textit{Observation} annotations in the LCT corpus. We call this substituted text an "augmented" eligibility criteria. The augmented criteria syntax reshapes named entities to more closely resemble expected logical form syntax and allows us to leverage the LCT corpus for logical form transformation.
 
 Creation and annotation of the LLF corpus proceeded in the following steps:
 
@@ -52,14 +52,14 @@ Creation and annotation of the LLF corpus proceeded in the following steps:
     \item Annotators received additional batches of files to annotate until all 2,000 single-annotated annotations had been completed.
 \end{enumerate}
 
-After annotations were completed, we experimented with predicting logical forms by fine-tuning T5 \cite{raffel2020exploring} Seq2Seq models. Following earlier work by Einolghozatic \textit{et al} \cite{einolghozati2019improving} and Rongali \textit{et al} \cite{rongali2020don} on task-oriented dialog semantic parsing structures, we also experimented with various alternative input-output syntax styles with the same semantic information as our "Standard" logical forms:
+After annotations were completed, we experimented with predicting logical forms by fine-tuning T5 \cite{raffel2020exploring} Seq2Seq models. Following earlier work by Einolghozatic \textit{et al} \cite{einolghozati2019improving} and Rongali \textit{et al} \cite{rongali2020don} on task-oriented dialog semantic parsing structures, we also experimented using various alternative input-output syntax styles but the same semantic information as our gold standard annotations:
 
 \begin{enumerate}
-    \item \textbf{Pointer style}. Rongali \textit{et al} found that replacing input tokens with the token "$@ptr_{index}$", where \textit{index} corresponds to a token's sequential position in the input text, to improve performance. We modified this approach by using the sequential position of the quoted text in our input criteria instead.
     \item \textbf{Shift-Reduce}. Einolghozatic \textit{et al} \cite{einolghozati2019improving} used square brackets before predicates instead of parentheses and blank spaces instead of commas. We followed Rongali \textit{et al's} suggestion to add a trailing repeat of predicate names to improve performance.
+    \item \textbf{Pointer}. Rongali \textit{et al} found that replacing input tokens with "$@ptr_{index}$", where \textit{index} corresponds to a token's sequential position in the input text improved performance in their semantic parsing task. We modified this approach by omitting the characters "ptr" and using the sequential position of the quoted span as our index rather than individual token positions.
 \end{enumerate}
 
-We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these formats. Example inputs, outputs, and training results are shown in Table \ref{aim2_tbl_corpus}. 
+We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{aim2_tbl_corpus}. 
 
 \begin{table}[h!]
     \footnotesize
@@ -69,9 +69,9 @@ We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus
     \label{aim2_tbl_corpus}
 \end{table} 
 
-We found that our "Standard" logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{ callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%), demonstrating that using the LCT corpus (for named entities) and LFF corpus (for logical forms) in tandem can achieve relatively high performance (> 93\% BLEU score) for this task.
+We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{ callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%, comparing raw text to Standard input styles), demonstrating that using the LCT corpus (for named entities) and LFF corpus (for logical forms) in tandem can achieve relatively high performance (> 93\% BLEU score) for this task. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for our work in sub-aim 2.
 
-\subsubsection{SubAim 2: Query Generation}
+\subsubsection{Sub-Aim 2: Query Generation}
 In sub-aim 2, we developed the LeafAI query engine, an application capable of generating database queries for cohort discovery from free-text eligibility descriptions. This sub-aim contributes the following:
 
 \begin{enumerate}
@@ -114,10 +114,10 @@ At a high level, query generation is performed in the following steps:
 \end{figure}
 
 \noindent \textbf{Named entity recognition and relation extraction} \\
-We used the Leaf Clinical Trials (LCT) corpus \cite{dobbins2022leaf} to train two BERT-based \cite{devlin2018bert} NER extractors, one each for LCT general- and fine-grained-entities (see \cite{dobbins2022leaf} for more information on LCT entity types). Next, we perform relation extraction between named entity pairs similarly using a BERT-based model also trained on the LCT corpus. \\
+We used the Leaf Clinical Trials (LCT) corpus \cite{dobbins2022leaf} to train two BERT-based \cite{devlin2018bert} NER extractors, one each for LCT general- and fine-grained-entities. Next, we perform relation extraction by enumerating named entity pairs similarly using a BERT-based model also trained on the LCT corpus. \\
 
 \noindent \textbf{Logical form transformation} \\
-As discussed, we leverage a fine-tuned T5 model for predicting logical forms. As inputs to the T5 model we use the original eligibility criteria with named entity spans replaced by logical form functions. For example, '\textit{Diagnosed with diabetes}' would become \textit{Diagnosed with cond("diabetes")}. After prediction, the output logical form string is then instantiated into an AST of nested in-memory logical form objects using a recursive descent parser within the API. \\
+As discussed, we leverage a fine-tuned T5 model for predicting logical forms. As inputs to the T5 model we use the original eligibility criteria with named entity spans replaced by logical form functions. After prediction, the output logical form string is then instantiated into an AST of nested in-memory logical form objects using a recursive descent parser within the API. \\
 
 \noindent \textbf{Concept normalization} \\
 We consider a logical form "named" if it contains a free-text value surrounding by quotes. For logical forms besides laboratory values, we used MetaMap \cite{aronson2001effective}. Normalization using MetaMap can often result in high recall but low precision, as MetaMap has no NER component and often finds multiple matching potential candidate concepts. To improve normalization precision, we employ two strategies. First, we compare term frequency-inverse document frequency (tf-idf) on MetaMap predictions, dropping UMLS concepts whose matched spans have a tf-idf score lower than that of unmatched spans in a given named entity. For example, for the string "covid-19 infection", MetaMap predicts both "COVID-19" (C5203670) as well as several concepts related to general infections. Using our tf-idf strategy removes the erroneous infection concepts. Next, our NER component also us to further improve precision by filtering the predicted UMLS concepts to only those of specific semantic types. For example, we limit condition concepts to only those which include semantic types of signs or symptoms, diseases or syndromes, and so on. 
@@ -184,9 +184,9 @@ While LeafAI executed queries for Crohn's Disease (NCT03782376) and Type 1 Diabe
 
 \subsubsection{Limitations and Future Work}
 
-To the best of our knowledge, the query generation and associated methods of LeafAI are the current state-of-the-art for the task of cohort discovery using a natural language interface. Nevertheless our system has numerous limitations. First, while we evaluated our query generation methods using a random sample of 8 actual clinical trials, those trials are a small subset of actual trials performed at the University of Washington and thus performance may vary significantly if our evaluation was expanded to a greater number of trials and disease domains. Second, while capable of reasoning across a large number of different scenarios and diseases, our KB and reasoning module use rules and pre-determined queries which likely fall short and fail to capture correct results in many cases. Moreover, our reasoning module often fails to capture in the nuance of many clinical concepts. For example, in Figure \ref{aim2_fig_leafai_querygen}, renal insufficiency and Dolutegravir are shown as contraindications to Metformin, but in reality for many patients those may not be absolute contraindications, depending on other health factors. Last, while our logical forms representation is uniquely flexible and demonstrably capable of representing many eligibility criteria, there are nonetheless likely many cases where our representation does not fully capture the semantics and nuance intended within certain criteria.
+To the best of our knowledge, the query generation and associated methods of LeafAI are the current state-of-the-art for the task of cohort discovery using a natural language interface. Nevertheless our system has a number of limitations. First, while we evaluated our query generation methods using a random sample of 8 actual clinical trials, those trials are a small subset of actual trials performed at the University of Washington and thus performance may vary significantly if our evaluation was expanded to a greater number of trials and disease domains. Second, while capable of reasoning across a large number of different scenarios and diseases, our KB and reasoning module use rules and pre-determined queries which likely fall short and fail to capture correct results in many cases. Moreover, our reasoning module is incapable of capturing the nuance and complexities between many clinical concepts. For example, in Figure \ref{aim2_fig_leafai_querygen}, renal insufficiency and Dolutegravir are shown as contraindications to Metformin, but in reality for many patients those may not be absolute contraindications, depending on other health factors. We intend to remedy this issue by allowing users to optionally add or remove LeafAI KB-derived concepts which they don't wish to include (e.g., a user could choose to keep diagnoses of renal insufficiency while ignoring prescriptions of Dolutegravir). Last, while our logical forms representation is uniquely flexible and demonstrably capable of representing many eligibility criteria, there are nonetheless likely many cases where our representation does not fully capture the semantics and nuance intended within certain criteria.
 
-In future work, we intend to explore extending our logical form representation for general-purpose question-answering. Leveraging the outer-most functions introduced by Roberts and Demner-Fushman such as \textit{latest()}, $\lambda$(), or \textit{min()}, our logical forms could be "wrapped" such that our logical forms are used for data retrieval while Roberts and Demner-Fushman's functions are executed to analyze returned data to answer a question. For example, the question \\
+In future work, we intend to explore extending our logical form representation for general-purpose question-answering. Leveraging the outer-most functions introduced by Roberts and Demner-Fushman such as \textit{latest()}, $\lambda$\textit{()}, and \textit{min()}, our logical forms could be "wrapped" such that our logical forms are used for data retrieval while Roberts and Demner-Fushman's functions are executed to analyze returned data to answer a question. For example, the question \\
 
 "\textit{Did the patient’s temperature exceed 38C in the last 48 hrs?}" \\
 
@@ -200,7 +200,7 @@ $\lambda( \\
 )$
 \end{quote}
 
-\noindent where the \textit{measurement()} function serves as a logical form for retrieval of relevant temperature data, while the $\lambda()$ function is executed to analyze the output and return a Boolean yes/no answer.
+\noindent where the \textit{measurement()} function serves as a logical form for retrieval of relevant temperature data, while the $\lambda$\textit{()} function is executed to analyze the output and return a Boolean yes/no answer.
 
 While general-purpose question-answering is not a specific aim of this project, the methods we have developed have potential to be a foundation for exciting future research directions. 
 
