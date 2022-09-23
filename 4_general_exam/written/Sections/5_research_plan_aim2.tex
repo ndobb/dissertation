@@ -4,12 +4,7 @@
 
 \subsection{Aim 2: Query Generation Methods Development and Evaluation}
 
-In Aim 2 we focus on development and evaluation of methods for query generation and reasoning on eligibility criteria. We divide this aim into two sub-aims:
-
-\begin{enumerate}
-    \item Development of a gold standard eligibility criteria logical forms corpus.
-    \item Creation of methods for query generation utilizing the corpus in (1)
-\end{enumerate}
+In Aim 2 we focus on development and evaluation of methods for query generation and reasoning on eligibility criteria. We divide this aim into two sub-aims: (1) Development of a gold standard eligibility criteria logical forms corpus, and (2) Creation of methods for query generation utilizing the corpus in (1).
 
 \subsubsection{SubAim 1: Creation of a Criteria to Logical Form Gold Standard}
 
@@ -34,7 +29,7 @@ $intersect( \\
 )$
 \end{quote}
 
-We named the corpus produced from this sub-aim the Leaf Logical Forms (LLF) corpus. We developed annotation guidelines for the LLF corpus using a simplification of entities and relations from the preceding LCT corpus discussed in Aim 1. Generally speaking, LCT \textit{entities} correspond to logical form \textit{functions}, while LCT \textit{relations} correspond to logical form \textit{predicates}. For example, the LCT \textit{Condition} entity has a corresponding \textit{cond()} function, while the \textit{Num-Filter} relation has a corresponding \textit{.num\_filter()} method. The LLF annotation guidelines can be found at \url{https://github.com/ndobb/clinical-trials-seq2seq-annotation/wiki}.
+We named the corpus produced from this sub-aim the Leaf Logical Forms (LLF) corpus. We developed annotation guidelines for the LLF corpus using a simplification of entities and relations from the preceding LCT corpus discussed in Aim 1. Generally speaking, LCT \textit{entities} correspond to logical form \textit{functions}, while LCT \textit{relations} correspond to logical form \textit{predicates}. For example, the LCT \textit{Condition} entity has a corresponding \textit{cond()} function, while the \textit{Num-Filter} relation has a corresponding \textit{.num\_filter()} predicate. The LLF annotation guidelines can be found at \url{https://github.com/ndobb/clinical-trials-seq2seq-annotation/wiki}.
 
 We also hypothesized that the performance of predicting logical forms could likely be improved by replacing "raw" tokens in each eligibility criteria with corresponding functions names derived from named entities from the LCT corpus. For example, given a raw input of \\
 
@@ -64,7 +59,7 @@ After annotations were completed, we experimented with predicting logical forms 
     \item \textbf{Shift-Reduce}. Einolghozatic \textit{et al} \cite{einolghozati2019improving} used square brackets before predicates instead of parentheses and blank spaces instead of commas. We followed Rongali \textit{et al's} suggestion to add a trailing repeat of predicate names to improve performance.
 \end{enumerate}
 
-We used a 70/20/10 train/test/validation split of the LFF corpus to fine-tune the T5$_{base}$ model using combinations of these formats. Example inputs, outputs, and training results are shown in Table \ref{aim2_tbl_corpus}. 
+We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these formats. Example inputs, outputs, and training results are shown in Table \ref{aim2_tbl_corpus}. 
 
 \begin{table}[h!]
     \footnotesize
@@ -130,7 +125,7 @@ We consider a logical form "named" if it contains a free-text value surrounding 
 Laboratory values also present a particular challenge, as LeafAI requires lab concepts to have directly associated LOINC codes, while MetaMap typically normalizes lab test strings to UMLS concepts of semantic type "laboratory test or finding", but which do not have direct mappings to LOINC. For example, a search for "platelet count" with MetaMap returns the concept "Platelet Count Measurement" (C0032181), but not the needed concept of "Platelet \# Bld Auto" (C0362994). Thus similar to Lee and Uzuner with medications \cite{lee2020normalizing}, we trained a BERT model specifically for normalization of lab tests. \\
 
 \noindent \textbf{Reasoning using an integrated knowledge base} \\
-\noindent For reasoning and derivation of ICD-10, LOINC, and other codes for UMLS concepts, we designed a knowledge base (KB) accessible via SPARQL queries and stored as RDF triples. The core of our KB is the UMLS, derived using a variation of techniques created for ontologies in BioPortal \cite{noy2009bioportal}. To further augment the UMLS, we mapped and integrated the Disease Ontology \cite{schriml2012disease}, Symptom Ontology \cite{sayers2010database}, COVID-19 Ontology \cite{sargsyan2020covid}, Potential Drug-Drug Interactions \cite{ayvaz2015toward}, LOINC2HPO \cite{zhang2019semantic}, and the Disease-Symptom Knowledge Base \cite{wang2008automated}. We then developed SPARQL queries parameterized by UMLS concepts for various scenarios which leveraged our KB, such as contraindications to treatments, symptoms of diseases, and so on. Using LOINC2HPO mappings further allows us to infer phenotypes by lab test results rather than only ICD-10 or SNOMED codes. For example, given the logical form \textit{cond("Hypercalcemia"}, our system will additionally search for abnormally high lab results of calcium [mass/volume] (LOINC: 17861-6).
+\noindent For reasoning and derivation of ICD-10, LOINC, and other codes for UMLS concepts, we designed a knowledge base (KB) accessible via SPARQL queries and stored as RDF triples. The core of our KB is the UMLS, derived using a variation of techniques created for ontologies in BioPortal \cite{noy2009bioportal}. To further augment the UMLS, we mapped and integrated the Disease Ontology \cite{schriml2012disease}, Symptom Ontology \cite{sayers2010database}, COVID-19 Ontology \cite{sargsyan2020covid}, Potential Drug-Drug Interactions \cite{ayvaz2015toward}, LOINC2HPO \cite{zhang2019semantic}, and the Disease-Symptom Knowledge Base \cite{wang2008automated}. We then developed SPARQL queries parameterized by UMLS concepts for various scenarios which leveraged our KB, such as contraindications to treatments, symptoms of diseases, and so on. Using LOINC2HPO mappings further allows us to infer phenotypes by lab test results rather than diagnosis codes alone. For example, given the logical form \textit{cond("Hypercalcemia")}, our system will additionally search for abnormally high lab results of calcium [mass/volume] (LOINC: 17861-6).
 
 Together our KB, nested logical forms, and inside-to-outside normalization methods enable "multi-hop" reasoning on eligibility criteria over several steps. For example, given the non-specific criterion "Contraindications to drugs for conditions which affect respiratory function", our system successfully reasons that (among other results),
 
@@ -167,7 +162,7 @@ For comparison, we also used the latest version of Criteria2Query (version 2.4) 
 
 \subsubsection{Results}
 
-Current results of our experiments are shown in Table \ref{aim2_tbl_results}. 
+Current results of our experiments are shown in Table \ref{aim2_tbl_results}.
 
 \begin{table}[h!]
     \footnotesize
@@ -191,11 +186,11 @@ While LeafAI executed queries for Crohn's Disease (NCT03782376) and Type 1 Diabe
 
 To the best of our knowledge, the query generation and associated methods of LeafAI are the current state-of-the-art for the task of cohort discovery using a natural language interface. Nevertheless our system has numerous limitations. First, while we evaluated our query generation methods using a random sample of 8 actual clinical trials, those trials are a small subset of actual trials performed at the University of Washington and thus performance may vary significantly if our evaluation was expanded to a greater number of trials and disease domains. Second, while capable of reasoning across a large number of different scenarios and diseases, our KB and reasoning module use rules and pre-determined queries which likely fall short and fail to capture correct results in many cases. Moreover, our reasoning module often fails to capture in the nuance of many clinical concepts. For example, in Figure \ref{aim2_fig_leafai_querygen}, renal insufficiency and Dolutegravir are shown as contraindications to Metformin, but in reality for many patients those may not be absolute contraindications, depending on other health factors. Last, while our logical forms representation is uniquely flexible and demonstrably capable of representing many eligibility criteria, there are nonetheless likely many cases where our representation does not fully capture the semantics and nuance intended within certain criteria.
 
-In future work, we intend to explore extending our logical form representation for general-purpose question-answering. Leveraging the outer-most functions introduced by Roberts and Demner-Fushman \cite{roberts2016annotating} such as \textit{latest()}, $\lambda$(), or \textit{min()}, our logical forms could be "wrapped" such that LFF logical forms are used for data retrieval while Roberts and Demner-Fushman's functions can be executed to analyze returned data and answer a question. For example, the question 
+In future work, we intend to explore extending our logical form representation for general-purpose question-answering. Leveraging the outer-most functions introduced by Roberts and Demner-Fushman such as \textit{latest()}, $\lambda$(), or \textit{min()}, our logical forms could be "wrapped" such that our logical forms are used for data retrieval while Roberts and Demner-Fushman's functions are executed to analyze returned data to answer a question. For example, the question \\
 
 "\textit{Did the patient’s temperature exceed 38C in the last 48 hrs?}" \\
 
-\noindent could be represented as \\
+\noindent could be represented as
 
 \begin{quote}
 $\lambda( \\
@@ -204,6 +199,8 @@ $\lambda( \\
     \mathrm{\ \ \ \ \ \ \ }.temporality(eq(op(LTEQ), val("48"), unit(HOUR))) \\
 )$
 \end{quote}
+
+\noindent where the \textit{measurement()} function serves as a logical form for retrieval of relevant temperature data, while the $\lambda()$ function is executed to analyze the output and return a Boolean yes/no answer.
 
 While general-purpose question-answering is not a specific aim of this project, the methods we have developed have potential to be a foundation for exciting future research directions. 
 
