@@ -4,17 +4,10 @@
 
 \subsection{Aim 1: Creation of Gold Standard Clinical Trials Data Set}
 
-\begin{table}[h!]
-\centering
-  \input{Tables/Aim1/aim1_corpora_compare}
-  \caption{\textbf{Annotation statistics for EliIE, Chia, and LCT corpora.}}
-  \label{aim_1_tbl_corpora_compare}
-\end{table}
-
 \subsubsection{Eligibility Criteria and Database Queries}
 The NLP tasks involved in transforming eligibility criteria into database queries include \textbf{named entity recognition} (NER) to tag meaningful spans of text as named entities, \textbf{relation extraction} to classify relations between named entities, \textbf{normalization} to map named entities to common coded representations (e.g., ICD-10), \textbf{negation detection} to detected negated statements (e.g., "not hypertensive") and so on. Gold standard corpora quality can thus directly affect performance and the validation of each of these tasks. Figure \ref{aim1_fig_lct_text2sql} illustrates why corpora structure and integrity are important for the task of query generation, using examples of eligibility criteria annotated using the LCT annotation schema and corresponding hypothetical Structured Query Language (SQL) queries. In the first eligibility criterion, "preeclampsia" is explicitly named, and thus can be directly normalized to an ICD-10 or other coded representation. However, eligibility criteria involving non-specific drugs, conditions, procedures, contraindications, and so on are used frequently in clinical trials. In the second criterion in Figure \ref{aim1_fig_lct_text2sql}, "diseases" in "diseases that affect respiratory function" is non-specific, and must be reasoned upon in order to determine appropriate codes, such as asthma, chronic obstructive pulmonary disease (COPD), or emphysema.  Programmatically reasoning to generate queries in such cases would be challenging and often impossible if the underlying semantics were not captured appropriately. With this in mind, we developed the LCT annotation schema in order to enable reasoning and ease query generation for real-world clinical trials use. As the second example in Figure \ref{aim1_fig_lct_text2sql} shows, the LCT annotation captures the semantics of complex criteria, with changes to "respiratory function" annotated using a \textit{Stability[change]} entity and \textit{Stability} relation, and the cause, "diseases" annotated with a \textit{Caused-By} relation.
 
-\begin{figure}[t]
+\begin{figure}[h!]
   \includegraphics[scale=0.57]{Figures/Aim1/aim1_lct_text2sql.pdf}  
   \caption{Example eligibility criteria annotated used the LCT corpus annotation schema (left) and corresponding example SQL queries (right) using a hypothetical database table and columns. Annotations were done using the Brat annotation tool \cite{stenetorp2012brat}. The ICD-10 codes shown are examples and not intended to be exhaustive.}
   \label{aim1_fig_lct_text2sql}
@@ -98,7 +91,7 @@ The example expression "Ages 18-55 years old" would be annotated in three layers
 \end{tabular}
 \end{center}
 
-This multilayered annotation strategy allows significant flexibility in capturing entities and relations in a slot-filling fashion, simplifying the task of downstream query generation. We show examples of this in the Usage Notes section. 
+This multilayered annotation strategy allows significant flexibility in capturing entities and relations in a slot-filling fashion, simplifying the task of downstream query generation.
 
 The LCT annotation schema contributes the following novel features: (1) deep granularity in entities and relations, which enables (2) rich semantic representation, closely capturing the intent of complex clinical trial eligibility criteria and facilitating accurate query generation. \\
 
@@ -120,7 +113,7 @@ In contrast, we designed the LCT annotation schema to favor discrete, explicit e
 
 \noindent \textbf{Rich Semantic Representation} \\
 
-Certain eligibility criteria cannot be directly translated into queries, but instead must first be reasoned upon. For example, a query to find patients meeting the criterion of "conditions contraindicating pioglitazone" requires reasoning to first answer the question, \textit{What} conditions contraindicate use of pioglitazone? Such reasoning may be performed by a knowledge base or other methods, but cannot be done unless the contraindicative relation is detected:
+Certain eligibility criteria cannot be directly translated into queries, but instead must first be reasoned upon. For example, a query to find patients meeting the criterion of "conditions contraindicating pioglitazone" requires reasoning to first answer the question, \textit{What} conditions contraindicate use of pioglitazone? Such reasoning may be performed by a knowledge base or other methods, but cannot be done unless the contraindicative relation is first detected:
 
 \begin{center}
 \begin{tabular}{c c c c c}
@@ -132,17 +125,17 @@ Certain eligibility criteria cannot be directly translated into queries, but ins
 \end{tabular}
 \end{center}
 
-\noindent As the span "Conditions" is labeled \textit{Condition} but does not have an overlapping \textit{Condition-Name} entity, it is considered unnamed and thus would need to be reasoned upon to determine. "[P]ioglitazone", on the other hand, includes a \textit{Drug-Name} entity and is thus considered named. The absence of overlapping \textit{Name} entities serves as an indicator to downstream applications that reasoning may be needed to determine relevant conditions or drugs. We examine additional cases of the LCT's semantic representation and benefits in the next section, where we compare the LCT annotation schema to Chia's.
-
-\begin{figure}[ht!]
-  \includegraphics[scale=0.56]{Figures/Aim1/aim1_chia_vs_lct.pdf}  
-    \caption{Examples of clinical trials eligibility criteria annotated with Chia and LCT annotation schemas. Each example shows a criterion from a Chia annotation (above) and an LCT annotation of the same text for purposes of comparison (below).}
-    \label{aim1_fig_chia_vs_lct}
-\end{figure}
+\noindent As the span "Conditions" is labeled \textit{Condition} but does not have an overlapping \textit{Condition-Name} entity, it is considered unnamed and thus would need to be reasoned upon to determine. "[P]ioglitazone", on the other hand, includes a \textit{Drug-Name} entity and is thus considered named. The absence of overlapping \textit{Name} entities serves as an indicator to downstream applications that reasoning may be needed to determine relevant conditions or drugs. \\ 
 
 \noindent \textbf{Comparison to Chia} \\
 
 We designed the LCT annotation schema by building upon the important previous work of EliIE and Chia. Chia builds upon EliIE and is more recent. Figure \ref{aim1_fig_chia_vs_lct} shows comparison examples of annotations of the same eligibility criteria using the two corpora in the Brat annotation tool \cite{stenetorp2012brat}. \\
+
+\begin{figure}[h!]
+  \includegraphics[scale=0.56]{Figures/Aim1/aim1_chia_vs_lct.pdf}  
+    \caption{Examples of clinical trials eligibility criteria annotated with Chia and LCT annotation schemas. Each example shows a criterion from a Chia annotation (above) and an LCT annotation of the same text for purposes of comparison (below).}
+    \label{aim1_fig_chia_vs_lct}
+\end{figure}
 
 \subsubsection{Annotation process}
 
@@ -158,7 +151,14 @@ During annotation, 14 documents were found to be information poor (often with no
 
 \end{enumerate}    
     
-The resulting corpus included 887 single-annotated and 119 double-annotated total notes. 
+The resulting corpus included 887 single-annotated and 119 double-annotated total notes. Summary statistics for the corpus are shown in Table \ref{aim_1_tbl_corpora_compare}.
+
+\begin{table}[h!]
+\centering
+  \input{Tables/Aim1/aim1_corpora_compare}
+  \caption{\textbf{Annotation statistics for EliIE, Chia, and LCT corpora.}}
+  \label{aim_1_tbl_corpora_compare}
+\end{table}
 
 \subsubsection{Inter-annotator agreement}
 Inter-annotator agreement was calculated using F\textsubscript{1} scoring for entities and relations with 20 double-annotated documents. Entity annotations were considered matching only if entity types and token start and end indices matched exactly. Relations annotations were similarly considered matching only if relation type and token start and end indices of both the subject and target matched exactly.
@@ -201,7 +201,7 @@ We achieved the highest micro-averaged F\textsubscript{1} score of 81.3\% on ent
 \end{table*}
 
 \subsubsection{Annotation quality evaluation}
-To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{aim1_entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents. \\
+To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{aim1_entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents.
 
 \def\arraystretch{1.2}
 \begin{table}[h!]
@@ -223,6 +223,6 @@ As the latter near-half (493 documents) of the LCT corpus was automatically anno
 Results of the experiments when training on both the manually and semi-automatically annotated halves of the corpus show comparable results, with the greatest difference being in precision, with the manual annotation-trained model performing slightly worse (-4.7\%) in prediction versus the semi-automated annotation-trained model. Overall F\textsubscript{1} scores were similar at 78.6\% and 80.0\%, suggesting reasonable consistency across the corpus.
 
 \subsubsection{Limitations}
-The LCT corpus is designed as a granular and robust resource of annotated eligibility criteria to enable models for entity and relation prediction as means of query generation. The corpus does have a number of limitations however which should be recognized. First, the corpus is largely singly annotated, with 119 of 1,006 documents (11\%) double annotated and reconciled, while double annotation is generally considered to be the gold standard in the NLP research community. As discussed in the Technical Validation section, the reasonably high F\textsubscript{1} score from experiments to evaluate NER when training on the singly annotated portion of the corpus suggests relative consistency of annotation across both single and double annotated documents. Additionally, entities in roughly half of the LCT corpus (493 documents) were automatically predicted, then manually corrected. This can potentially lead to data bias if predicted entities are not thoroughly reviewed and corrected by human annotators. Similar results from our experiments to detect differences in performance by training on the manually annotated portion versus the semi-automatically annotated portion (F\textsubscript{1} scores of 78.6\% and 80.0\%) suggest this may not be not a significant issue. \\
+The LCT corpus is designed as a granular and robust resource of annotated eligibility criteria to enable models for entity and relation prediction as means of query generation. The corpus does have a number of limitations however which should be recognized. First, the corpus is largely singly annotated, with 119 of 1,006 documents (11\%) double annotated and reconciled, while double annotation is generally considered to be the gold standard in the NLP research community. However, the reasonably high F\textsubscript{1} score from experiments to evaluate NER when training on the singly annotated portion of the corpus suggests relative consistency of annotation across both single and double annotated documents. Additionally, entities in roughly half of the LCT corpus (493 documents) were automatically predicted, then manually corrected. This can potentially lead to data bias if predicted entities are not thoroughly reviewed and corrected by human annotators. Similar results from our experiments to detect differences in performance by training on the manually annotated portion versus the semi-automatically annotated portion (F\textsubscript{1} scores of 78.6\% and 80.0\%) suggest this may not be not a significant issue. \\
 
 \end{document}
