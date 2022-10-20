@@ -1,0 +1,28 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+Much of the work to date on cohort discovery and RCT eligibility criteria matching has been impressive and impactful in leveraging advances in related research domains. Yet critical gaps remain in terms of practical usability, generalizability, and measurement of performance for these methods in the context of real-world clinical trials and data. 
+
+Among existing clinical trials corpora (to be discussed in Aim 1), Chia is the largest and most notable, but also can be difficult to directly translate into SQL queries as its entities and relations often require additional downstream parsing and normalization. Chia also lacks entities and concepts important to clinical trials, such as contraindications or means of distinguishing between specified and non-specifc criteria. 
+
+Among tools and methods for SQL query generation (to be discussed in Aim 2), most efforts to date are capable of generating database queries on only a single database schema, such as OMOP or MIMIC. While the OMOP database schema is widely used in research, this lack of flexibility and adaptability toward other data models limits potential utility, in particular given the widely documented necessity to change and extend the standard OMOP schema to accommodate real-world project needs \cite{belenkaya2021extending, peng2021towards, zoch2021adaption, warner2019hemonc, zhou2013evaluation, shin2019genomic, kwon2019development}. Moreover, most methods for generating SQL queries, particularly those using Encoder-Decoder Transformer-based architectures, tend to generate relatively simple SQL statements, with few JOINs or nested sub-queries and typically no support for UNION operators and so on.
+
+Methods utilizing clinical notes for document ranking show great potential, particularly given the significant amount of untapped information present in free-text as compared to structured data \cite{warrer2012using}. However the use of these systems at enterprise scale or as ad hoc query tools for researchers has been limited, and the number of notes used for experiments tend to be few (hundreds or low thousands) as compared to the tens of millions of clinical notes stored within many EHRs. 
+
+Efforts using patient and eligibility criteria embeddings, while novel and showing future potential, also have notable limitations. For example, one study assumed that patients who did not enroll in a given trial were not eligible \cite{zhang2020deepenroll} (which may not necessarily be true), and none of the research we are aware of provided sufficient detail on how structured data were transformed into embeddings or what specific data elements were used, preventing direct reproducibility. Research in methods using Description Logics and related representations and ontologies, meanwhile, has been largely experimental and untested using large real-world clinical databases. Many works also require domain experts to first manually translate eligibility criteria to logical representations, making them unrealistic as cohort discovery tools. 
+Few of the methods described provide support for complex logic, and none support reasoning on non-specific criteria (e.g., "diseases that affect respiratory function"), two phenomena common to eligibility criteria \cite{wang2017classifying, ross2010analysis}. Perhaps most importantly, to the best of our knowledge, only one previous work has been tested in terms of matching patients enrolled in actual clinical trials \cite{zhang2020deepenroll} (with caveats discussed earlier), and none have been directly compared to the capabilities of a human database programmer. 
+
+Among NLP-based cohort discovery tools (to be discussed in Aims 2 and 3), Criteria2Query, the most well known, offers a friendly but simplistic user interface with no support for saving queries, reasoning, or summary of patients found at each step. \\
+
+\noindent This project will be highly innovative by
+
+\begin{enumerate}
+    \itemsep0em 
+    \item Releasing a uniquely granular and practical NLP corpus of annotated eligibility criteria.
+    \item Establishing a robust new state-of-the-art system for eligibility criteria matching on clinical databases of any data model with multi-hop reasoning and logical form transformation.
+    \item Creating a novel web-based application using a chat-based user interface which enables system interpretations line-by-line and allows iterative dynamic queries using natural language.
+\end{enumerate}
+
+
+\end{document}

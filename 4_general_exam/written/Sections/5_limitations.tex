@@ -1,0 +1,13 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+Cohort discovery and clinical data exploration in general is a wide, diverse field, and the methods and applications developed in this project will inevitably not meet certain needs or particularly complex use cases. 
+
+The models trained on the LCT and LLF corpora will in some cases predict values incorrectly, both because no model performs perfectly, and also because the gold standard human annotations of those projects are also imperfect and not necessarily representative of all clinical trials. Of the annotators, none were clinical domain experts, which may also impact corpora quality.
+
+Methods for query generation developed in this project also have shortcomings, including cases where normalization or named entity recognition may fail, and the logical form representations we use cannot represent all possible criteria accurately. These flaws inevitably impact certain queries and return potentially incorrect results.
+
+Last, while much of this project deals with the use and identification of data for finding patients, clinical data are tremendously complex and imperfectly representative of reality in terms of human health, recordings of events over time, and so on. Data can be missing, messy, or wrong, and applications such as LeafAI are subject to and impacted by this.
+
+\end{document}
