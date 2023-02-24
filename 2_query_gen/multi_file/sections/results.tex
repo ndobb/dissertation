@@ -3,19 +3,19 @@
 
 \begin{document}
 
-Results of our evalution are shown in Table \ref{tbl_results}.
+Results of the query generation experiment are shown in Table \ref{tbl_results}.
 
 \begin{table}[h!]
     \small
     \centering
     \input{tables/results}
-    \caption{}
+    \caption{Statistics for each clinical trial evaluated by the LeafAI query engine and human programmer. The number of enrolled and matched patients were determined by cross-matching enrollments listed within our EHR.}
     \label{tbl_results}
 \end{table} 
 
 \begin{figure}[h!]
   \includegraphics[scale=0.42]{figures/leafai_detail_results_longitudinal.png}  
-\caption{}
+\caption{Longitudinal results listing results of patients found at each step in the query process for each trial. The blue line indicates \% Recall (left-most Y axis) while the gray line indicates the number of eligible patients found (right-most Y axis). The X axis represents the line number within the free-text eligibility criteria. Dots indicate that the LeafAI query engine executed an eligibility criterion query.}
 \label{fig_leafai_results_longitudinal}
 \end{figure}
 
@@ -23,9 +23,8 @@ Results of our evalution are shown in Table \ref{tbl_results}.
     \small
     \centering
     \input{tables/results_leafai_detail}
-    \caption{}
+    \caption{The LeafAI query engine's handling of eligibility criteria for each trial. The column \textit{Skipped - No Patients} indicates the count of criteria which would, if executed, cause no patients to be eligible. The column \textit{Skipped - Not Computable} indicates the count of criteria which LeafAI could not generate a query for, for various reasons. Both of these types of criteria were ignored by the system.}
     \label{tbl_results_leafai_detail}
 \end{table} 
-
 
 \end{document}

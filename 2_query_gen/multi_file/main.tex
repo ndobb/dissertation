@@ -1,4 +1,83 @@
-\documentclass[fleqn,10pt]{wlscirep}
+%\documentclass[fleqn,10pt]{wlscirep}
+\documentclass[sort&compress, numafflabel]{elsarticle}
+
+% SDOH paper packages
+\usepackage[]{natbib}
+\usepackage[breaklinks,hidelinks]{hyperref}
+\usepackage{times}
+\usepackage{latexsym}
+\renewcommand{\UrlFont}{\ttfamily\small}
+\usepackage{geometry}
+\usepackage{subfiles}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{hyphenat}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{enumitem}
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-\do\_}
+\usepackage[color=yellow, textsize=small]{todonotes}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usepackage{textcomp}
+\usepackage{soul,color}
+\usepackage{pifont}
+
+\makeatletter
+\def\ps@pprintTitle{%
+ \let\@oddhead\@empty
+ \let\@evenhead\@empty
+ \def\@oddfoot{}%
+ \let\@evenfoot\@oddfoot}
+\makeatother
+\usepackage{epstopdf}
+\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 \OutputFile}
+\AppendGraphicsExtensions{.tif}
+
+\usepackage{titlesec}
+\titleformat{\section}
+      {\normalfont\bfseries}
+      {\thesection}
+      {0ex}
+      {\MakeUppercase}
+      %[\vspace{1ex}]
+
+\titleformat{\subsection}
+      {\normalfont\bfseries}
+      {\thesection}
+      {0ex}
+      {}
+      %[\vspace{1ex}]
+
+\titleformat{\subsubsection}
+      {\normalfont}
+      {\thesection}
+      {0ex}
+      {}
+
+\bibliographystyle{bst/vancouver2}   
+
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\usepackage{setspace}
+\doublespacing
+\newif\ifsubfile
+\subfiletrue
+\newif\iftif
+\tiffalse
+
+% prev packages
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lineno}
@@ -32,30 +111,47 @@
 
 \title{The LeafAI query engine: a data model-agnostic query generator for cohort discovery and multi-hop biomedical reasoning using natural language}
 
-\author[1,*]{Nicholas J Dobbins}
-\author[1]{Bin Han}
-\author[1]{Weipeng Zhou}
-\author[2]{Kristine Lan}
-\author[2]{H. Nina Kim}
-\author[2]{Robert Harrington}
-\author[3]{Özlem Uzuner}
-\author[1]{Meliha Yetisgen}
-\affil[1]{Department of Biomedical Informatics \& Medical Education, University of Washington, Seattle, WA, USA}
-\affil[2]{Department of Medicine, University of Washington, Seattle, WA, USA}
-\affil[4]{Department of Information Sciences and Technology, George Mason University, Fairfax, VA, USA}
-\affil[*]{corresponding author(s): (ndobb@uw.edu)}
+\author[bime,reIt]{Nicholas J Dobbins\textsuperscript{+}\blfootnote{\textsuperscript{+}Corresponding author: Nicholas Dobbins, MLIS, Department of Biomedical Informatics and Medical Education, University of Washington, 1851 NE Grant Ln, Seattle, WA 98195, USA; ndobb@uw.edu.}}
+
+\ead{}
+\author[ischool]{Bin Han}\ead{}
+\author[bime]{Weipeng Zhou}\ead{}
+\author[med]{Kristine lan}\ead{}
+\author[med]{H. Nina Kim}\ead{}
+\author[med]{Robert Harrington}\ead{}
+\author[ist]{Özlem Uzuner}\ead{}
+\author[bime]{Meliha Yetisgen}\ead{}
+
+\address[bime]{Department of Biomedical Informatics \& Medical Education, University of Washington, Seattle, WA, USA}
+\address[reIt]{Department of Research IT, UW Medicine, University of Washington, Seattle, WA, USA}
+\address[med]{Department of Medicine, University of Washington, Seattle, WA, USA}
+\address[ischool]{Information School, University of Washington, Seattle, WA, USA}
+\address[ist]{Department of Information Sciences and Technology, George Mason University, Fairfax, VA, USA \blfootnote{ \\ Word count: 4472} \blfootnote{\\ Keywords: clinical trials, natural language processing, machine learning, electronic health records, cohort definition}}
+
+\begin{document}
+\subfilefalse
+
+\newpageafter{author}
 
 \begin{abstract}
-\noindent
-\subfile{sections/abstract}
+    \subfile{sections/abstract}
 \end{abstract}
-\begin{document}
-\flushbottom
+
+\begin{keyword}
+social determinants of health, natural language processing, machine learning, electronic health records, data mining
+\end{keyword}
+
 \maketitle
+
+\pagebreak
 
 \section*{Introduction}
 \label{sec:background}
 \subfile{sections/introduction}
+
+\section*{Background and Significance}
+\label{sec:background}
+\subfile{sections/background}
 
 \section*{Materials and Methods}
 \label{sec:methods}
@@ -73,6 +169,7 @@
 \label{sec:conclusion}
 \subfile{sections/conclusion}
 
+%TC:ignore 
 \section*{Acknowledgements} 
 
 This study was supported in part by the National Library of Medicine under Award Number R15LM013209 and by the National Center for Advancing Translational Sciences of National Institutes of Health under Award Number UL1TR002319. Experiments were run on computational resources generously provided by the UW Department of Radiology.
@@ -85,10 +182,12 @@ ND
 
 The authors declare no competing interests.
 
+\bibliography{sample}
+
 \section*{Appendix}
 \label{sec:appendix}
 \subfile{sections/appendix}
 
-\bibliography{sample}
+%TC:endignore 
 
 \end{document}
