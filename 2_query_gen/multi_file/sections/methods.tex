@@ -8,7 +8,7 @@
 The LeafAI query engine was designed using a modular, micro service-based architecture with a central API (Application Program Interface) which orchestrates end-to-end query generation. Inter-module communication is performed using gRPC \cite{grpc}, a robust open-source remote procedure call framework which enables language-agnostic service integration. This allows individual modules to be implemented (and substituted) in programming languages and using libraries well-suited to a given task. A diagram of the LeafAI query engine architecture is shown in Figure \ref{fig_leafai_architecture}. 
 
 \begin{figure}[h]
-  \includegraphics[scale=0.6]{figures/leafai_architecture.pdf}  
+  \includegraphics[scale=0.55]{figures/leafai_architecture.pdf}  
 \caption{LeafAI query architecture. Inter-module communication is performed using the gRPC framework. Individual modules are deployed as Docker \cite{docker} containers and communicate solely with the central API, which orchestrates query generation and handles query generation requests.}
 \label{fig_leafai_architecture}
 \end{figure}
@@ -31,7 +31,7 @@ At a high level, query generation is performed in the following steps:
 \noindent Figure \ref{fig_leafai_querygen} illustrates an example of this process. In the following subsections we examine these steps in detail.
 
 \begin{figure}[h]
-  \includegraphics[scale=0.47]{figures/leafai_flow.pdf}  
+  \includegraphics[scale=0.44]{figures/leafai_flow.pdf}  
 \caption{LeafAI query generation processes}
 \label{fig_leafai_querygen}
 \end{figure}
@@ -40,9 +40,9 @@ At a high level, query generation is performed in the following steps:
 
 \noindent Named entity recognition (NER) refers to the segmentation and identification of tokens within an input sentence as "entities", such as conditions or procedures. We used the Leaf Clinical Trials (LCT) corpus \cite{dobbins2022leaf} to train two BERT-based \cite{devlin2018bert} NER extractors, one each for LCT general- and fine-grained-entities (see \cite{dobbins2022leaf} for more information on LCT entity types). Next, we perform relation extraction between named entity pairs similarly using a BERT-based model also trained on the LCT corpus.
 
-\subsection*{Intermediate logical form transformation}
+\subsection*{Logical form transformation}
 
-\noindent One of the core challenges of generating queries for eligibility criteria is the problem of logical representation. Generating queries directly based on named entities and relations, while practical, may perform poorly in cases of nested or complex logic. An alternative to this approach is to use a so-called intermediate representation (IR), which transforms the original natural language input by removing "noise" unnecessary to a given task and which more logically represents underlying semantics (see Herzig \textit{et al} \cite{herzig2021unlocking} for an examination of IR-based SQL generation approaches). Similar to earlier discussed work using Description Logics, Roberts and Demner-Fushman \cite{roberts2016annotating} proposed a representation of questions on EHR databases using a comparatively compact but flexible format using first order logic expressions, for example, representing "Is she wheezing this morning?" as
+\noindent One of the core challenges of generating queries for eligibility criteria is the problem of logical representation. Generating queries directly based on named entities and relations alone, while perhaps practical, may perform poorly in cases of nested or particulary complex logic. An alternative to this approach is to use a so-called intermediate representation (IR), which transforms the original natural language input by removing "noise" unnecessary to a given task and which more logically represents underlying semantics (see Herzig \textit{et al} \cite{herzig2021unlocking} for an examination of IR-based SQL generation approaches). Similar to earlier discussed work using Description Logics, Roberts and Demner-Fushman \cite{roberts2016annotating} proposed a representation of questions on EHR databases using a comparatively compact but flexible format using first order logic expressions, for example, representing "Is she wheezing this morning?" as
 
 \begin{quote}
     \centering
@@ -61,16 +61,16 @@ $intersect( \\
 )$
 \end{quote}
 
-\noindent A description of our logical forms annotation schema, corpus, annotation process, and performance metrics can be found in Appendix A.
+\noindent A description of our logical forms annotation schema, corpus, called the Leaf Logical Forms (LLF) corpus, annotation process, and performance metrics can be found in Appendix A.
 
-After named entity recognition and relation extraction are performed, we leverage T5 \cite{raffel2020exploring}, a state-of-the-art Seq2Seq architecture we fine-tuned for predicting logical forms. As inputs to the Seq2Seq model we use the original eligibility criteria with named entity spans replaced by logical form representations, as we found this to significantly improve performance compared to training with raw inputs without named entities. Thus the above example would be transformed to the input string
+After named entity recognition and relation extraction are performed, we leverage T5 \cite{raffel2020exploring}, a state-of-the-art Seq2Seq architecture we fine-tuned for predicting logical forms on the LLF corpus. As inputs to the Seq2Seq model we use the original eligibility criteria with named entity spans replaced by logical form representations, as we found this to significantly improve performance compared to training with raw inputs without named entities. Thus the above example would be transformed to the input string
 
 \begin{quote}
     \centering
     $\textit{"cond(“Diabetic”) female() and male() over age() eq(op(GT), val(“65”))"}$
 \end{quote}
 
-\noindent The returned logical form string is then instantiated into an abstract syntax tree (AST) of nested in-memory logical form objects using a recursive descent parser \cite{johnstone1998generalised} within the API.
+\noindent The returned logical form string is then instantiated into an abstract syntax tree (AST) of nested in-memory logical form objects using a recursive descent parser \cite{johnstone1998generalised} within our API.
 
 \subsection*{Concept normalization}
 
@@ -106,9 +106,9 @@ To enable data model-agnostic query generation, we leveraged a subset of codes w
 
 \subsection*{Evaluation}
 
-An NLP-based system for finding patients based on eligibility criteria should be reasonably expected to find many or most patients enrolled in a real clinical trial - with the assumption that patients enrolled in those trials correctly met the necessary criteria as determined by study investigators. While there are caveats to this approach (for example, certain structured diagnosis codes may be missing for some patients, etc.), we aimed to establish a new baseline by which tools such as ours are evaluated in their ability to handle real-world eligibility criteria and clinical data.
+An NLP-based system for finding patients based on eligibility criteria should be reasonably expected to find many or most patients enrolled in a real clinical trial - with the assumption that patients enrolled in those trials correctly met the necessary criteria as determined by study investigators. While there are caveats to this approach (for example, certain structured diagnosis codes may be missing for some patients, etc.), we aimed to establish a new baseline by which tools such as ours are evaluated in their ability to handle real-world eligibility criteria and clinical data. 
 
-We compared LeafAI's results to that of a human database programmer experienced in the use of clinical databases and data extraction. Our evaluation was performed as follows:
+We compared LeafAI's results to that of a human database programmer experienced in the use of clinical databases and data extraction. We considered evaluating Criteria2Query as well, but ultimately determine it inappropriate for our analysis, as we aimed to review results found longitudinally (i.e., line by line of criteria), a function which Criteria2Query does not do. Our evaluation was performed as follows:
 
 \begin{enumerate}
     \item We extracted metadata on 165 clinical trials from our EHR between January 2010 and December 2021 where at least 10 patients were indicated as enrolled and not withdrawn and the total number of raw lines within the eligibility criteria (besides the phrases "Inclusion Criteria" and "Exclusion Criteria") were less than or equal to 30.
