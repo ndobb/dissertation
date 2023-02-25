@@ -117,8 +117,7 @@ We compared LeafAI's results to that of a human database programmer experienced 
     \item We randomly chose 1 trial from each group, with the exception of Oncology, where we chose 2 trials.
     \item Both the LeafAI query engine and human programmer created queries to find patients for each eligibility criteria, which we executed on an OMOP database derived from our EHR of our institution's entire research-eligible patient population. 
     \item In order to ensure results returned would be limited to only data available during the time of each trial, we replaced references to the SQL function for generating a current timestamp (\textit{GETDATE()}) with that of each trial's end date, and similarly replaced OMOP table references with SQL views filtering data to only that existing prior to the end of a trial.
-    \item The human programmer was instructed to (1) ignore criteria which cannot be computed, (2) make a best-effort to reason upon non-specific criteria (e.g., symptoms for a condition), (3) not check whether patients found by a human query enrolled within a trial, and (4) skip criteria which cause an overall query to find no eligible patients. 
-    \item As with LeafAI, the human-written SQL scripts also had any SQL \textit{GETDATE()} function references replaced with that of the end date for each trial.
+    \item The human programmer was instructed to (1) ignore criteria which cannot be computed, (2) make a best-effort to reason upon non-specific criteria (e.g., symptoms for a condition), (3) not check whether patients found by a human query enrolled within a trial, and (4) skip criteria which cause an overall query to find no eligible patients.
 \end{enumerate}
 
 \end{document}
