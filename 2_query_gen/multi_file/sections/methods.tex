@@ -5,7 +5,7 @@
 
 \subsection*{System Architecture}
 
-The LeafAI query engine was designed using a modular, micro service-based architecture with a central API (Application Program Interface) which orchestrates end-to-end query generation. Inter-module communication is performed using gRPC \cite{grpc}, a robust open-source remote procedure call framework which enables language-agnostic service integration. This allows individual modules to be implemented (and substituted) in programming languages and using libraries well-suited to a given task. A diagram of the LeafAI query engine architecture is shown in Figure \ref{fig_leafai_architecture}. 
+The LeafAI query engine was designed using a modular, micro service-based architecture with a central Application Program Interface (API) which orchestrates end-to-end query generation. Inter-module communication is performed using gRPC \cite{grpc}, a robust open-source remote procedure call framework which enables language-agnostic service integration. This allows individual modules to be implemented (and substituted) in programming languages and using libraries well-suited to a given task. A diagram of the LeafAI query engine architecture is shown in Figure \ref{fig_leafai_architecture}. 
 
 \begin{figure}[h]
   \includegraphics[scale=0.55]{figures/leafai_architecture.pdf}  
@@ -63,7 +63,7 @@ $intersect( \\
 
 \noindent A description of our logical forms annotation schema, corpus, called the Leaf Logical Forms (LLF) corpus, annotation process, and performance metrics can be found in Appendix A.
 
-After named entity recognition and relation extraction are performed, we leverage T5 \cite{raffel2020exploring}, a state-of-the-art Seq2Seq architecture we fine-tuned for predicting logical forms on the LLF corpus. As inputs to the Seq2Seq model we use the original eligibility criteria with named entity spans replaced by logical form representations, as we found this to significantly improve performance compared to training with raw inputs without named entities. Thus the above example would be transformed to the input string
+After NER and relation extraction are performed, we leverage T5 \cite{raffel2020exploring}, a state-of-the-art Seq2Seq architecture we fine-tuned for predicting logical forms on the LLF corpus. As inputs to the Seq2Seq model we use the original eligibility criteria with named entity spans replaced by logical form representations, as we found this to significantly improve performance compared to training with raw inputs without named entities. Thus the above example would be transformed to the input string
 
 \begin{quote}
     \centering
@@ -82,7 +82,7 @@ Laboratory values present a particular challenge, as LeafAI expects predicted la
 
 \subsection*{Reasoning using an integrated knowledge base}
 
-For reasoning and derivation of ICD-10, LOINC, and other codes for UMLS concepts, we designed a knowledge base (KB) accessible via SPARQL queries and stored as RDF triples. The core of our KB is the UMLS, derived using a variation of techniques created for ontologies in BioPortal \cite{noy2009bioportal}. To further augment the UMLS, we mapped and integrated the Disease Ontology \cite{schriml2012disease}, Symptom Ontology \cite{sayers2010database}, COVID-19 Ontology \cite{sargsyan2020covid}, Potential Drug-Drug Interactions \cite{ayvaz2015toward}, LOINC2HPO \cite{zhang2019semantic}, and the Disease-Symptom Knowledge Base \cite{wang2008automated}. We then developed SPARQL queries parameterized by UMLS concepts for various scenarios which leveraged our KB, such as contraindications to treatments, symptoms of diseases, and so on. Using LOINC2HPO mappings further allows us to infer phenotypes by lab test results rather than only ICD-10 or SNOMED codes, for example. 
+For reasoning and derivation of ICD-10, LOINC, and other codes for UMLS concepts, we designed a knowledge base (KB) accessible via SPARQL queries and stored as Resource Description Framework (RDF) \cite{manola2004rdf} triples. The core of our KB is the UMLS, derived using a variation of techniques created for ontologies in BioPortal \cite{noy2009bioportal}. To further augment the UMLS, we mapped and integrated the Disease Ontology \cite{schriml2012disease}, Symptom Ontology \cite{sayers2010database}, COVID-19 Ontology \cite{sargsyan2020covid}, Potential Drug-Drug Interactions \cite{ayvaz2015toward}, LOINC2HPO \cite{zhang2019semantic}, and the Disease-Symptom Knowledge Base \cite{wang2008automated}. We then developed SPARQL queries parameterized by UMLS concepts for various scenarios which leveraged our KB, such as contraindications to treatments, symptoms of diseases, and so on. Using LOINC2HPO mappings further allows us to infer phenotypes by lab test results rather than only ICD-10 or SNOMED codes, for example. 
 
 Our KB, nested logical forms, and inside-to-outside normalization methods enable "multi-hop" reasoning on eligibility criteria over several steps. For example, given the non-specific criterion "Contraindications to drugs for conditions which affect respiratory function", our system successfully reasons that (among other results),
 
@@ -96,7 +96,7 @@ Our KB, nested logical forms, and inside-to-outside normalization methods enable
 
 \subsection*{Query generation using semantic metadata mapping}
 
-To enable data model-agnostic query generation, we leveraged a subset of codes within the UMLS in what we define as a semantic metadata mapping, or SMM. An includes a listing of available databases, tables, columns, and so on within a given database schema. Critically, these database artifacts are "tagged" using UMLS concepts. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where the LeafAI query engine finds more than one means of querying a concept (e.g., two SQL tables for diagnosis codes), the queries are combined in a UNION statement.
+To enable data model-agnostic query generation, we leveraged a subset of codes within the UMLS in what we define as a semantic metadata mapping, or SMM. An SMM includes a listing of available databases, tables, columns, and so on within a given database schema. Critically, these database artifacts are "tagged" using UMLS concepts. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where the LeafAI query engine finds more than one means of querying a concept (e.g., two SQL tables for diagnosis codes), the queries are combined in a UNION statement.
 
 \begin{figure}[h]
   \includegraphics[scale=0.47]{figures/leafai_smm.pdf}  
@@ -106,12 +106,12 @@ To enable data model-agnostic query generation, we leveraged a subset of codes w
 
 \subsection*{Evaluation}
 
-An NLP-based system for finding patients based on eligibility criteria should be reasonably expected to find many or most patients enrolled in a real clinical trial - with the assumption that patients enrolled in those trials correctly met the necessary criteria as determined by study investigators. While there are caveats to this approach (for example, certain structured diagnosis codes may be missing for some patients, etc.), we aimed to establish a new baseline by which tools such as ours are evaluated in their ability to handle real-world eligibility criteria and clinical data. 
+An NLP-based system for finding patients based on eligibility criteria should be reasonably expected to find many or most patients enrolled in a real clinical trial — with the assumption that patients enrolled in those trials correctly met the necessary criteria as determined by study investigators. While there are caveats to this approach (for example, certain structured diagnosis codes may be missing for some patients, etc.), we aimed to establish a new baseline by which tools such as ours are evaluated in their ability to handle real-world eligibility criteria and clinical data. 
 
 We compared LeafAI's results to that of a human database programmer experienced in the use of clinical databases and data extraction. Our evaluation was performed as follows:
 
 \begin{enumerate}
-    \item We extracted metadata on 165 clinical trials from our EHR between January 2010 and December 2021 where at least 10 patients were indicated as enrolled and not withdrawn and the total number of raw lines within the eligibility criteria (besides the phrases "Inclusion Criteria" and "Exclusion Criteria") were less than or equal to 30.
+    \item We extracted metadata on 165 clinical trials from our EHR between January 2010 and December 2021 where at least 10 patients were indicated as enrolled and not withdrawn, and the total number of raw lines within the eligibility criteria (besides the phrases "Inclusion Criteria" and "Exclusion Criteria") was less than or equal to 30.
     \item By manual review, we excluded 41 trials with multiple sub-groups, as it would not be possible to know which eligibility criteria applied to which sub-group of enrolled patients.
     \item Using the "condition" field for each trial within metadata from \url{https://clinicaltrials.gov}, we filtered and grouped the remaining 124 trials into only those related to predetermined groups: Cardiology, COVID-19, Crohn's Disease, Multiple Sclerosis, Diabetes Mellitus, Hepatitis C, and Oncology. 
     \item We randomly chose 1 trial from each group, with the exception of Oncology, where we chose 2 trials.

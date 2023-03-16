@@ -41,10 +41,10 @@ Following earlier work on task-oriented dialog semantic parsing structures in th
 
 \begin{enumerate}
     \item \textbf{Shift-Reduce}. Einolghozatic \textit{et al.} \cite{einolghozati2019improving} used square brackets instead of parentheses and blank spaces instead of commas. We followed Rongali \textit{et al's} suggestion to add a trailing repeat of function names to improve performance.
-    \item \textbf{Pointer}. Rongali \textit{et al.} found that replacing input tokens with "$@ptr_{index}$", where \textit{index} corresponds to a token's sequential position in the input text improved performance in their semantic parsing task. We modified this approach by omitting the characters "ptr" and using the sequential position of the quoted span as our index rather than individual token positions.
+    \item \textbf{Pointer}. Rongali \textit{et al.} \cite{rongali2020don} found that replacing input tokens with "$@ptr_{index}$", where \textit{index} corresponds to a token's sequential position in the input text improved performance in their semantic parsing task. We modified this approach by omitting the characters "ptr" and using the sequential position of the quoted span as our index rather than individual token positions.
 \end{enumerate}
 
-We used a randomly sorted a 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{tbl_llf_corpus}. 
+We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{tbl_llf_corpus}. 
 
 \begin{table}[h!]
     \footnotesize
