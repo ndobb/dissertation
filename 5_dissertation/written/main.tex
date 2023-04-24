@@ -46,6 +46,21 @@
 
 % --- Nic-added packages ---
 \usepackage{subfiles}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+%\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{changepage}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{makecell}
+\usepackage[math]{cellspace}
+\usepackage{tikz}
+\usepackage{booktabs}
+%\usepackage{refcheck} % use with \nocite{*} to get unused references
 % --- end Nic-added packages ---
  
 %
@@ -99,27 +114,31 @@
 \titlepage  
 
 \setcounter{page}{-1}
-\subfile{Sections/0_abstract}
+
+\abstract{
+    \subfile{Sections/0_abstract}
+}
  
 \tableofcontents
 \listoffigures
 \listoftables  
  
-\chapter*{Glossary}    
-\addcontentsline{toc}{chapter}{Glossary}
+\chapter*{List of Abbreviations}    
+\addcontentsline{toc}{chapter}{List of Abbreviations}
 \thispagestyle{plain}
-\subfile{Sections/0_glossary}
+\subfile{Sections/0_abbreviations}
  
 \acknowledgments{% \vskip2pc
-  % {\narrower\noindent
-  The author wishes to express sincere appreciation to
-  University of Washington, where he has had the opportunity
-  to work with the \TeX\ formatting system,
-  and to the author of \TeX, Donald Knuth, {\it il miglior fabbro}.
-  % \par}
+  I want to begin by thanking my advisor, Meliha Yetisgen. At a time when I knew next-to-nothing about natural language processing, she kindly and patiently met with me and explained the basics and suggested what I should focus on learning. She was among the first to suggest I get a PhD, wrote not one but two recommendations for my graduate school application (first as non-matriculated, then as a formal PhD student), and has provided ongoing constructive feedback, advice, support, and opportunities for much of my career. I think there are few people in life that we can objectively say we have been changed by, but in mine she is certainly one of them. I'm eternally grateful.
+
+  I also want to thank the members of my committee, Nina Kim, Trevor Cohen, and Fei Xia. Nina was among the first physicians I interacted with at UW, and her feedback and suggestions over the years have been extremely helpful. Trevor and Fei are both truly excellent teachers and passionate about their work.
+
+  Sean Mooney and Peter Tarczy-Hornoch have also been critical to my PhD journey. I'll never forget the day that I showed Peter\textemdash who happened to be passing by\textemdash a demo of the prototype of Leaf. That Peter was willing to sit and talk with me about how it worked for over an hour meant the world to me (particularly as a former History major with never-ending imposter syndrome). Sean has been unerringly supportive and a wonderful mentor.
+
+  Last, I'm incredibly grateful to my wife, Akiko. Through the years of working full-time while pursuing my PhD, she has helped me stay grounded and focused on our family and children, who I am intensely proud of and who will always be my greatest joy and priority. I can only hope that they grow to enjoy the same love of learning and imagining \textit{what could be?} that I think make life interesting and worth living.  
 }
 
-\dedication{\begin{center}to my children, Elly, Ami, and Sage.\end{center}}
+\dedication{\begin{center}To my children, Elly, Ami, and Sage.\end{center}}
 
 %
 % end of the preliminary pages
@@ -134,9 +153,9 @@
 \label{sec:background}
 \subfile{Sections/2_background}
 
-\chapter{Leaf Clinical Trials Corpus}
-\label{sec:lct_corpus}
-\subfile{Sections/3_lct_corpus}
+%\chapter{Leaf Clinical Trials Corpus}
+%\label{sec:lct_corpus}
+%\subfile{Sections/3_lct_corpus}
 
 \chapter{Leaf Logical Forms Corpus}
 \label{sec:llf_corpus}
@@ -150,13 +169,9 @@
 \label{sec:query_generation}
 \subfile{Sections/6_query_generation}
 
-\chapter{User Application}
-\label{sec:user_application}
-\subfile{Sections/7_user_application}
- 
 \chapter{Conclusions}
 \label{sec:conclusions}
-\subfile{Sections/8_conclusions}
+\subfile{Sections/7_conclusions}
  
 \printendnotes
 
@@ -165,7 +180,7 @@
 %
 %\nocite{*}   % include everything in the uwthesis.bib file
 \bibliographystyle{plain}
-\bibliography{uwthesis}
+\bibliography{main}
 %
 % ==========   Appendices
 %
@@ -175,7 +190,7 @@
 % ========== Appendix A
  \chapter{Appendix A}
 \label{sec:appendix_a}
-\subfile{Sections/9_appendix}
+\subfile{Sections/8_appendix}
 
 
 \end{document}
