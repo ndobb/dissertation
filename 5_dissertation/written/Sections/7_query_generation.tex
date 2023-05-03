@@ -4,7 +4,7 @@
 
 \section{Overview}
 
-Identifying groups of patients meeting a given set of eligibility criteria is a critical step for recruitment into randomized controlled trials (RCTs). Often, clinical studies  fall short of recruitment goals, leading to time and cost overruns or  challenges in ensuring adequate statistical power \cite{gul2010clinical, adams2015barriers}. Failure to recruit research subjects may result from a variety of factors, but often stems from difficulties in translating complex eligibility criteria into effective queries that can sift through data  in the electronic health record (EHR) \cite{wang2017classifying}. Despite these difficulties, RCT investigators  increasingly rely on EHR data queries to  identify research candidates instead of labor-intensive manual chart or case report form review \cite{cowie2017electronic}. At the same time, the amount and variety of data contained in EHRs is increasing dramatically, creating both challenges and opportunities for patient recruitment \cite{lee2017medical}. While more granular and potentially useful data are captured and stored in EHRs now than in the past, the process of accessing and leveraging that data requires technical expertise and extensive knowledge of biomedical terminologies and data models. 
+Identifying groups of patients meeting a given set of eligibility criteria is a critical step for recruitment into randomized controlled trials (RCTs). Often, clinical studies fall short of recruitment goals, leading to time and cost overruns or  challenges in ensuring adequate statistical power \cite{gul2010clinical, adams2015barriers}. Failure to recruit research subjects may result from a variety of factors, but often stems from difficulties in translating complex eligibility criteria into effective queries that can sift through data  in the electronic health record (EHR) \cite{wang2017classifying}. Despite these difficulties, RCT investigators  increasingly rely on EHR data queries to  identify research candidates instead of labor-intensive manual chart or case report form review \cite{cowie2017electronic}. At the same time, the amount and variety of data contained in EHRs is increasing dramatically, creating both challenges and opportunities for patient recruitment \cite{lee2017medical}. While more granular and potentially useful data are captured and stored in EHRs now than in the past, the process of accessing and leveraging that data requires technical expertise and extensive knowledge of biomedical terminologies and data models. 
 
 Cohort discovery tools such as Leaf \cite{dobbins2019leaf} and i2b2 \cite{murphy2010serving} may be used in many situations, as they offer relatively simple drag-and-drop interfaces capable of querying EHR data to find patients meeting given criteria \cite{johnson2014use}.  However, these tools have limitations, since their use often requires significant training  and the tools have difficulty representing particularly complex nested or temporal eligibility criteria \cite{deshmukh2009evaluating}. Moreover, existing cohort discovery tools lack functionality to dynamically reason upon non-specific criteria that frequently appear in real-world eligibility criteria. For example, a criterion may require patients "indicated for bariatric surgery", but translating such non-specific criteria into a query (e.g., patients with a diagnosis of morbid obesity or body mass index greater than 40) must be performed manually by a researcher, even in cases where constructing an exhaustive list of such criteria may be time-intensive, subjective, and error-prone. 
 
@@ -39,7 +39,7 @@ We introduce the LeafAI query engine, an application capable of generating datab
 The LeafAI query engine was designed using a modular, micro service-based architecture with a central Application Program Interface (API) which orchestrates end-to-end query generation. Inter-module communication is performed using gRPC \cite{grpc}, a robust open-source remote procedure call framework which enables language-agnostic service integration. This allows individual modules to be implemented (and substituted) in programming languages and using libraries well-suited to a given task. A diagram of the LeafAI query engine architecture is shown in Figure \ref{fig_leafai_architecture}. 
 
 \begin{figure}[h]
-  \includegraphics[scale=0.57]{Figures/6_query_generation/leafai_architecture.pdf}  
+  \includegraphics[scale=0.57]{Figures/7_query_generation/leafai_architecture.pdf}  
 \caption{LeafAI query architecture. Inter-module communication is performed using the gRPC framework. Individual modules are deployed as Docker \cite{docker} containers and communicate solely with the central API, which orchestrates query generation and handles query generation requests.}
 \label{fig_leafai_architecture}
 \end{figure}
@@ -62,7 +62,7 @@ At a high level, query generation is performed in the following steps:
 \noindent Figure \ref{fig_leafai_querygen} illustrates an example of this process. In the following subsections we examine these steps in detail.
 
 \begin{figure}[h]
-  \includegraphics[scale=0.46]{Figures/6_query_generation/leafai_flow.pdf}  
+  \includegraphics[scale=0.46]{Figures/7_query_generation/leafai_flow.pdf}  
 \caption{LeafAI query generation processes}
 \label{fig_leafai_querygen}
 \end{figure}
@@ -130,7 +130,7 @@ Our KB, nested logical forms, and inside-to-outside normalization methods enable
 To enable data model-agnostic query generation, we leveraged a subset of codes within the UMLS in what we define as a semantic metadata mapping, or SMM. An SMM includes a listing of available databases, tables, columns, and so on within a given database schema. Critically, these database artifacts are "tagged" using UMLS concepts. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where the LeafAI query engine finds more than one means of querying a concept (e.g., two SQL tables for diagnosis codes), the queries are combined in a UNION statement.
 
 \begin{figure}[h!]
-  \includegraphics[scale=0.47]{Figures/6_query_generation/leafai_smm.pdf}  
+  \includegraphics[scale=0.47]{Figures/7_query_generation/leafai_smm.pdf}  
 \caption{The LeafAI query engine's SQL query generation process using two hypothetical database schema to generate queries for platelet counts (shown in logical form after normalization). This example illustrates the flexibility of LeafAI's semantic metadata mapping system (represented here in JSON format) in adapting to virtually any data model. On the left, "Tall Table Structure", platelet counts must be filtered from within a general purpose "labs" table. The LeafAI KB recognizes that labs may be stored as LOINC codes, and the corresponding SMM indicates that records in this table can be filtered to LOINC values. On the right, "Pivoted Table Structure", platelet counts are stored as a specific column in a "complete\_blood\_counts" table, and thus can be directly queried without further filtering. Additional metadata, columns, tables, types and so on needed in SMMs are omitted for brevity.}
 \label{fig_leafai_smm}
 \end{figure}
@@ -158,7 +158,7 @@ Results of the query generation experiment are shown in Table \ref{tbl_results}.
 \begin{table}[h!]
     \small
     \centering
-    \input{Tables/6_query_generation/results}
+    \input{Tables/7_query_generation/results}
     \caption{Statistics for each clinical trial evaluated by the LeafAI query engine and human programmer. The number of enrolled and matched patients were determined by cross-matching enrollments listed within our EHR. The \textit{Time} column indicates the number of hours the human programmer spent developing queries for each trial.}
     \label{tbl_results}
 \end{table} 
@@ -168,7 +168,7 @@ Table \ref{tbl_results_leafai_detail} shows the number of criteria which were sk
 \begin{table}[h!]
     \footnotesize
     \centering
-    \input{Tables/6_query_generation/results_skipped}
+    \input{Tables/7_query_generation/results_skipped}
     \caption{The LeafAI query engine's handling of eligibility criteria for each trial. The column \textit{No Patients} indicates the count of criteria which would, if executed, cause no patients to be eligible. The column \textit{Not Computable} indicates the count of criteria which LeafAI could not generate a query for, for various reasons. Both of these types of criteria were ignored by the system.}
     \label{tbl_results_leafai_detail}
 \end{table} 
@@ -177,7 +177,7 @@ Figure \ref{fig_leafai_results_analysis} shows differences in query strategies f
 
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[scale=0.54]{Figures/6_query_generation/leafai_analysis.pdf}  
+    \includegraphics[scale=0.54]{Figures/7_query_generation/leafai_analysis.pdf}  
   \end{center}
   \caption{Longitudinal results listing patients found at each step in the query process for four trials illustrating data issues and differing query strategies between LeafAI and the human programmer. The blue line indicates recall for LeafAI and orange that of the human programmer. The X axis represents the line number within the free-text eligibility criteria. Dots indicate that a query was executed for a given line. On the right, boxes represent the text of a given eligibility criteria, with comments below discussing strategies and findings.}
   \label{fig_leafai_results_analysis}
