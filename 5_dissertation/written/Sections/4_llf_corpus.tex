@@ -2,7 +2,13 @@
 
 \begin{document}
 
-\section{Creation of Gold Standard Logical Forms Dataset}
+\section{Overview}
+
+
+\section{Related Work}
+
+
+\section{Methods}
 
 We developed annotation guidelines for the LLF corpus using a simplification of entities and relations from the preceding LCT corpus\cite{dobbins2022leaf}. Generally speaking, LCT \textit{entities} correspond to logical form \textit{functions}, while LCT \textit{relations} correspond to logical form \textit{predicates}. For example, the LCT \textit{Condition} entity has a corresponding \textit{cond()} function, while the \textit{Num-Filter} relation has a corresponding \textit{.num\_filter()} predicate. The LLF annotation guidelines can be found at \url{https://github.com/ndobb/clinical-trials-seq2seq-annotation/wiki}.
 
@@ -29,7 +35,7 @@ Creation and annotation of the LLF corpus proceeded in the following steps:
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.7]{Figures/llf/annotation_example.png}
+  \includegraphics[scale=0.7]{Figures/4_llf_corpus/annotation_example.png}
   \caption{An example LLF corpus annotation. The annotation file is saved in JavaScript (.js) format, which enables syntax highlighting and validation to assist annotators. Whether a given criterion was an inclusion or exclusion criteria is indicated at the top, followed by the original raw text, then augmented text. The final annotated logical forms are shown last.}
   \label{fig_annotation_example}
 \end{figure}
@@ -48,11 +54,11 @@ We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus
 \begin{table}[t!]
     \footnotesize
     \centering
-    \input{Tables/llf/corpus}
+    \input{Tables/4_llf_corpus/corpus}
     \caption{Example inputs and logical form syntax styles with fine-tuning performance results using the T5$_{base}$ model.}
     \label{tbl_llf_corpus}
 \end{table} 
 
-We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{ callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%, comparing raw text to Standard input styles), demonstrating that leveraging the LCT corpus to generate augmented text achieved relatively high performance (> 93\% BLEU score) for this task. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for LeafAI.
+We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%, comparing raw text to Standard input styles), demonstrating that leveraging the LCT corpus to generate augmented text achieved relatively high performance (> 93\% BLEU score) for this task. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for LeafAI.
 
 \end{document}

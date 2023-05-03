@@ -2,29 +2,25 @@
 
 \begin{document}
 
-\section{Creation of Gold Standard Clinical Trials Data Set}
+\section{Overview}
 
 The NLP tasks involved in transforming eligibility criteria into database queries may include \textbf{named entity recognition} (NER) to tag meaningful spans of text as named entities, \textbf{relation extraction} to classify relations between named entities, \textbf{normalization} to map named entities to common coded representations (e.g., ICD-10), \textbf{negation detection} to detect negated statements (e.g., "not hypertensive") and so on. Gold standard corpora quality can thus directly affect performance and the validation of each of these tasks. Such corpora can serve as reliable benchmarks for purposes of comparing NLP methods as well as training data sets. 
 
-In Aim 1 we create a gold standard corpus of human-annotated clinical trial eligibility criteria. Predictive models trained on this corpus enable and are used in subsequent aims of this project. This aim is complete and was published in August 2022 \cite{dobbins2022leaf}.
+In this chapter we describe the creation of a gold standard corpus of human-annotated clinical trial eligibility criteria and performance data measured during our evaluation. Predictive models trained on this corpus enable and are used in subsequent aims of this project. Section 3.1 discusses related work. Section 3.2 ... This work was published as Dobbins \textit{et al} in 2022 \cite{dobbins2022leaf}.
 
-\subsection{Related Work}
-
-A number of corpora related to clinical trials have been published \cite{kury2020chia, kang2017eliie, weng2011elixr, yu2020}. Weng \textit{et al} developed EliXR \cite{weng2011elixr}, a rule-based information extraction (IE) pipeline and corpus of 1,000 eligibility criteria documents for NER and relation extraction. The corpus was not made publicly available. Kang \textit{et al} created an annotation schema based on the Observational Medical Outcomes Partnership (OMOP) Common Data Model \cite{hripcsak2015observational} and an annotated corpus of 230 eligibility criteria documents, though the corpus focused narrowly on Alzheimer's Disease-related trials only \cite{kang2017eliie}. More recently, Kury \textit{et al} created Chia \cite{kury2020chia}, a publicly available corpus of 1,000 Phase IV trials similarly focused on the OMOP Common Data model but across a variety of disease domains and with a greater number of types of entities and relations. Yu \textit{et al} \cite{yu2020} released a corpus designed for direct text-to-query generation with semantic parsing, however given the relative simplicity of generated queries to date compared to the complexity of clinical databases, it is not clear this approach is yet viable for real-world clinical trials recruitment.
-
-\subsection{Eligibility Criteria and the need for Reasoning}
+\section{Motivation}
 
 We aimed to develop an expressive, task-oriented annotation schema which could capture a wide range of medical concepts and logical constructs present in eligibility criteria. To accomplish this, we first analyzed previously published corpora \cite{weng2011elixr,boland2012elixrtime,kang2017eliie,kury2020chia} and expanded the list of included biomedical phenomena to fully capture the context and logic present in real clinical trials criteria. As one example, we introduced an entity called \textit{Contraindication} to reflect where use of a given treatment is inadvisable due to possible harm to the patient. 
 
-Figure \ref{aim1_fig_lct_text2sql} illustrates the importance of corpora structure for the task of query generation, using examples of eligibility criteria annotated using our annotation schema and corresponding hypothetical Structured Query Language (SQL) queries. In the first eligibility criterion, "preeclampsia" is explicitly named, and thus can be directly normalized to an ICD-10 or other coded representation. However, eligibility criteria involving non-specific drugs, conditions, procedures, contraindications, and so on are used frequently in clinical trials. In the second criterion in Figure \ref{aim1_fig_lct_text2sql}, "diseases" in "diseases that affect respiratory function" is non-specific, and must be reasoned upon in order to determine appropriate codes, such as asthma, chronic obstructive pulmonary disease (COPD), or emphysema.  Programmatically reasoning to generate queries in such cases would be challenging and often impossible if the underlying semantics were not captured appropriately. With this in mind, we developed the Leaf Clinical Trials, or LCT, annotation schema in order to enable reasoning and ease query generation for real-world clinical trials use. As the second example in Figure \ref{aim1_fig_lct_text2sql} shows, the LCT annotation captures the semantics of complex criteria, with changes to "respiratory function" annotated using a \textit{Stability[change]} entity and \textit{Stability} relation, and the cause, "diseases" annotated with a \textit{Caused-By} relation.
+Figure \ref{fig_lct_text2sql} illustrates the importance of corpora structure for the task of query generation, using examples of eligibility criteria annotated using our annotation schema and corresponding hypothetical Structured Query Language (SQL) queries. In the first eligibility criterion, "preeclampsia" is explicitly named, and thus can be directly normalized to an ICD-10 or other coded representation. However, eligibility criteria involving non-specific drugs, conditions, procedures, contraindications, and so on are used frequently in clinical trials. In the second criterion in Figure \ref{fig_lct_text2sql}, "diseases" in "diseases that affect respiratory function" is non-specific, and must be reasoned upon in order to determine appropriate codes, such as asthma, chronic obstructive pulmonary disease (COPD), or emphysema.  Programmatically reasoning to generate queries in such cases would be challenging and often impossible if the underlying semantics were not captured appropriately. With this in mind, we developed the Leaf Clinical Trials, or LCT, annotation schema in order to enable reasoning and ease query generation for real-world clinical trials use. As the second example in Figure \ref{fig_lct_text2sql} shows, the LCT annotation captures the semantics of complex criteria, with changes to "respiratory function" annotated using a \textit{Stability[change]} entity and \textit{Stability} relation, and the cause, "diseases" annotated with a \textit{Caused-By} relation.
 
 \begin{figure}[h!]
-  \includegraphics[scale=0.57]{_Figures/Aim1/aim1_lct_text2sql.pdf}  
+  \includegraphics[scale=0.54]{Figures/3_lct_corpus/text2sql.pdf}  
   \caption{Example eligibility criteria annotated used the LCT corpus annotation schema (left) and corresponding example SQL queries (right) using a hypothetical database table and columns. Annotations were done using the Brat annotation tool \cite{stenetorp2012brat}. The ICD-10 codes shown are examples and not intended to be exhaustive.}
-  \label{aim1_fig_lct_text2sql}
+  \label{fig_lct_text2sql}
 \end{figure}
 
-\subsection{Annotation schema}
+\section{Annotation schema}
 
 The LCT annotation schema is designed with the following goals and assumptions:
 
@@ -49,7 +45,15 @@ The LCT annotation schema is composed of \textbf{entities} and
 
 The LCT corpus also includes 7 \textit{Name} entities: \textit{Allergy-Name}, \textit{Condition-Name}, \textit{Drug-Name}, \textit{Immunization-Name}, \textit{Observation-Name}, \textit{Organism-Name} and \textit{Procedure-Name}. \textit{Name} entities serve a special purpose in the LCT corpus, as they indicate that a span of text refers to a \textit{specific} condition, drug, etc., as opposed to \textit{any} condition or drug. \textit{Name} entities overlap with their respective general entities. For example, the span "preeclampsia" refers to a specific condition, and would thus be annotated as both a \textit{Condition} and \textit{Condition-Name}, while the span "diseases" is non-specific and would be annotated as only \textit{Condition}. A full listing of the LCT annotation guidelines can be found at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki}.
 
-We defined a total of 50 entities in the LCT corpus. In our representation, a subset of entities have \textbf{values} as well. For example, an \textit{Encounter} may have a value of \textit{emergency}, \textit{outpatient} or \textit{inpatient}. Values are optional in some entities (such as \textit{Encounters} or \textit{Family-Member}, where they may not always be clear or are intentionally broad) and always present in others. In the example annotations presented below, values are denoted using brackets ("[...]") following entity labels.
+We defined a total of 50 entities in the LCT corpus. Examples of selected representative entities are presented in Table \ref{tbl_lct_entity_examples}. In our representation, a subset of entities have \textbf{values} as well. For example, an \textit{Encounter} may have a value of \textit{emergency}, \textit{outpatient} or \textit{inpatient}. Values are optional in some entities (such as \textit{Encounters} or \textit{Family-Member}, where they may not always be clear or are intentionally broad) and always present in others. In the example annotations presented below, values are denoted using brackets ("[...]") following entity labels.
+
+\begin{table}
+    \footnotesize
+    \input{Tables/3_lct_corpus/entity_examples}
+    \caption{\textbf{Examples of representative LCT annotation schema entities.} A full listing of all entities can be found in the LCT annotation guidelines at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki}.}
+    \label{tbl_lct_entity_examples}
+\end{table} 
+
 
 Relations serve as semantically meaningful connections between entities, such as when one entity acts upon, is found by, caused by, or related in some way to another. We categorize relations into the following:
 
@@ -63,7 +67,15 @@ Relations serve as semantically meaningful connections between entities, such as
     \item \textbf{Other} - \textit{From, Except, Has, Is-Other, Location, Refers-To, Study-Of}.
 \end{itemize}
 
-\noindent We defined a total of 51 relations in the LCT corpus.
+\noindent We defined a total of 51 relations in the LCT corpus. Examples of relation criteria are shown in Table \ref{tbl_lct_relation_examples}.
+
+\begin{table}
+    \centering
+    \footnotesize
+    \input{Tables/3_lct_corpus/relation_examples}
+    \caption{\textbf{Examples of representative relations.} Direction of arrows indicates role, i.e., subject → target entity.}
+    \label{tbl_lct_relation_examples}
+\end{table}
 
 In our annotations, some entity spans overlap with other entity spans in order to fully capture complex underlying semantics. Consider for example, the expression "Ages 18-55 years old". While an \textit{Age} entity may be assigned to token "Ages", if an \textit{Eq-Comparison} entity alone were assigned to the span "18-55 years old", the underlying semantics of the tokens "18", "-", "55", and "years" would be lost. In the following examples, we use the term \textbf{fine-grained entity} to refer to entities which are sub-spans of other \textbf{general entities}. Fine-grained entities are linked to general entities by relations. We use down arrow symbols (↓) to denote entity annotation and left and right arrow symbols (← and →) to denote relations. The (+) symbols denote overlapping entities on the same span.
 
@@ -104,7 +116,7 @@ This multilayered annotation strategy allows significant flexibility in capturin
 
 The LCT annotation schema contributes the following novel features: (1) deep granularity in entities and relations, which enables (2) rich semantic representation, closely capturing the intent of complex clinical trial eligibility criteria and facilitating accurate query generation. \\
 
-\noindent \textbf{Deep Entity and Relation Granularity} \\
+\subsection{Deep Entity and Relation Granularity}
 We assume that more specific annotation labels are generally more straightforward to generate accurate queries with. For example, within the span, "preceding six months", annotating the token "preceding" as \textit{Temporal} (an entity type in Chia) may appear to be adequate, given that an English-speaking human would understand that this refers to the past. Without further information, however, a naïve algorithm would be unable to determine (1) whether such a entity refers to the past, present, or future, (2) that the token "six" refers to a numeric value, and (3) that "months" refers to a unit of temporal measurement. In such cases, most query generation algorithms introduce additional rule-based or syntactic parsing modules, such as SuTime \cite{chang2012sutime} to further normalize the phrase to a value \cite{weng2011elixr, yuan2019criteria2query}. This ambiguity in label semantics creates unnecessary complexity in downstream systems, requiring that the same text be processed a second time. 
 
 In contrast, we designed the LCT annotation schema to favor discrete, explicit entities and relations where possible, with an aim toward reducing the need for additional normalization steps needed for query generation. In our annotation schema, this example would be annotated with the following fine-grained entities: \\
@@ -120,7 +132,7 @@ In contrast, we designed the LCT annotation schema to favor discrete, explicit e
 
 \noindent As shown in the example, each token is uniquely annotated, with the values \textit{[past]} and \textit{[month]} serving to more clearly disambiguate semantics of the temporal phrase to a normalized temporal value. Moreover, as fine-grained entities are connected by relations to general entities, which can in turn have relations to other general entities, the LCT annotation schema is able to capture eligibility criteria semantics at a deeper level than other corpora. \\
 
-\noindent \textbf{Rich Semantic Representation} \\
+\subsection{Rich Semantic Representation}
 
 Certain eligibility criteria cannot be directly translated into queries, but instead must first be reasoned upon. For example, a query to find patients meeting the criterion of "conditions contraindicating pioglitazone" requires reasoning to first answer the question, \textit{What} conditions contraindicate use of pioglitazone? Such reasoning may be performed by a knowledge base or other methods, but cannot be done unless the contraindicative relation is first detected:
 
@@ -136,14 +148,14 @@ Certain eligibility criteria cannot be directly translated into queries, but ins
 
 \noindent As the span "Conditions" is labeled \textit{Condition} but does not have an overlapping \textit{Condition-Name} entity, it is considered unnamed and thus would need to be reasoned upon to determine. "[P]ioglitazone", on the other hand, includes a \textit{Drug-Name} entity and is thus considered named. The absence of overlapping \textit{Name} entities serves as an indicator to downstream applications that reasoning may be needed to determine relevant conditions or drugs. \\ 
 
-\noindent \textbf{Comparison to Chia} \\
+\subsection{Comparison to Chia}
 
-We designed the LCT annotation schema by building upon the important previous work of EliIE and Chia. Chia builds upon EliIE and is more recent. Figure \ref{aim1_fig_chia_vs_lct} shows comparison examples of annotations of the same eligibility criteria using the two corpora in the Brat annotation tool \cite{stenetorp2012brat}. \\
+We designed the LCT annotation schema by building upon the important previous work of EliIE and Chia. Chia builds upon EliIE and is more recent. Figure \ref{fig_chia_vs_lct} shows comparison examples of annotations of the same eligibility criteria using the two corpora in the Brat annotation tool \cite{stenetorp2012brat}. \\
 
 \begin{figure}[h!]
-  \includegraphics[scale=0.56]{_Figures/Aim1/aim1_chia_vs_lct.pdf}  
+  \includegraphics[scale=0.52]{Figures/3_lct_corpus/chia_vs_lct.pdf}  
     \caption{Examples of clinical trials eligibility criteria annotated with Chia and LCT annotation schemas. Each example shows a criterion from a Chia annotation (above) and an LCT annotation of the same text for purposes of comparison (below).}
-\label{aim1_fig_chia_vs_lct}
+\label{fig_chia_vs_lct}
 \end{figure}
 
 \subsection{Annotation process}
@@ -160,13 +172,14 @@ During annotation, 14 documents were found to be information poor (often with no
 
 \end{enumerate}    
     
-The resulting corpus included 887 single-annotated and 119 double-annotated total notes. Summary statistics for the corpus are shown in Table \ref{aim_1_tbl_corpora_compare}.
+The resulting corpus included 887 single-annotated and 119 double-annotated total notes. Summary statistics for the corpus are shown in Table \ref{tbl_corpora_compare}.
 
 \begin{table}[h!]
-\centering
-  \input{_Tables/Aim1/aim1_corpora_compare}
+  \small
+  \centering
+  \input{Tables/3_lct_corpus/corpora_compare}
   \caption{\textbf{Annotation statistics for EliIE, Chia, and LCT corpora.}}
-  \label{aim_1_tbl_corpora_compare}
+  \label{tbl_corpora_compare}
 \end{table}
 
 \subsection{Inter-annotator agreement}
@@ -174,43 +187,46 @@ Inter-annotator agreement was calculated using F\textsubscript{1} scoring for en
 
 Initial inter-annotator agreement using the 20 training documents was 76.1\% for entities and 60.3\% for relations. Inter-annotator agreement improved slightly to 78.1\% (+2\%) for entities and 60.9\% (+0.6\%) for relations in the 99 additional double-annotated documents, indicating reasonably high annotator agreement considering the complexity of the annotation task.
 
-\subsection{Baseline prediction}
+\section{Evaluation}
 To evaluate baseline predictive performance on the LCT corpus, we first created a randomly assigned 80/20 split of the corpus, with 804 documents used for the training set and 202 for the test set. For entity prediction, we trained NER models using biLSTM+CRF and BERT \cite{devlin2018bert} neural architectures. For BERT-based prediction, we used two pretrained models trained on published medical texts, SciBERT \cite{beltagy2019scibert} and PubMedBERT \cite{gu2021domain}. For both biLSTM+CRF and BERT predictions, we trained one model to predict general entities and another for fine-grained entities. 
 
-For relation extraction, we evaluated SciBERT for sequence classification as well as a modified BERT architecture, R-BERT, following methods developed by Wu \& He \cite{wu2019enriching}, also using the pretrained SciBERT model. Table \ref{aim1_tbl_hyperparams} shows hyperparameters used for each task.
+For relation extraction, we evaluated SciBERT for sequence classification as well as a modified BERT architecture, R-BERT, following methods developed by Wu \& He \cite{wu2019enriching}, also using the pretrained SciBERT model. Table \ref{tbl_hyperparams} shows hyperparameters used for each task.
 
 \def\arraystretch{1.2}
 \begin{table}[h!]
+  \small
   \centering
   \def\arraystretch{1}
   \footnotesize
-  \input{_Tables/Aim1/aim1_hyperparams}
+  \input{Tables/3_lct_corpus/hyperparams}
   \caption{Hyperparameters and pre-trained embeddings used for named entity recognition and relation extraction baseline results. For the NER task, the same architecture and hyperparameters were used for both general and fine-grained entity models. For the relation extraction task, the same hyperparameters were used with both the BERT and R-BERT architectures.}
-  \label{aim1_tbl_hyperparams}
+  \label{tbl_hyperparams}
 \end{table}
 
-We achieved the highest micro-averaged F\textsubscript{1} score of 81.3\% on entities using SciBERT and 85.2\% on relations using the R-BERT architecture with SciBERT \footnote{A full listing of baseline prediction results can be found with the annotation guidelines at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki/Named-Entity-Recognition-and-Relation-Extraction-performance}. }. Results of representative entities and relations are shown in Tables \ref{aim1_entity_f1} and \ref{aim1_relation_f1}.
+We achieved the highest micro-averaged F\textsubscript{1} score of 81.3\% on entities using SciBERT and 85.2\% on relations using the R-BERT architecture with SciBERT \footnote{A full listing of baseline prediction results can be found with the annotation guidelines at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki/Named-Entity-Recognition-and-Relation-Extraction-performance}. }. Results of representative entities and relations are shown in Tables \ref{entity_f1} and \ref{relation_f1}.
 
 \begin{table}[tp]
+    \small
     \centering
     \def\arraystretch{1.4}
     \footnotesize
-    \input{_Tables/Aim1/aim1_entities_f1}
+    \input{Tables/3_lct_corpus/entities_f1}
     \caption{\textbf{Baseline entity prediction scores (\%, Precision / Recall / F\textsubscript{1}).} Corpus-level micro-averaged scores are shown in the bottom row. For brevity a representative sample of entities is shown. \textit{Count} refers to the total count of unique spans annotated in the entire corpus. Entities included in the total count and scores but omitted for brevity are \textit{Acuteness, Allergy, Condition-Type, Code, Coreference, Ethnicity, Eq-Operator, Eq-Unit, Indication, Immunization, Insurance, Life-Stage-And-Gender, Organism, Other, Specimen, Study and Provider}.}
-    \label{aim1_entity_f1}
+    \label{entity_f1}
 \end{table}
 
 \begin{table*}
+    \small
     \centering
     \def\arraystretch{1.4}
     \footnotesize
-    \input{_Tables/Aim1/aim1_relations_f1}
+    \input{Tables/3_lct_corpus/relations_f1}
     \caption{\textbf{Baseline relation prediction scores (\%, Precision / Recall / F\textsubscript{1}).} Corpus-level micro-averaged scores are shown in the bottom row. For brevity a representative sample of relations is shown. \textit{Count} refers to the total count annotated in the entire corpus, including relations not shown. The count total excludes general to fine-grained entity relations, which as overlapping spans are not used for relation prediction. Relations included in the total count and scores but omitted for brevity are \textit{Acuteness, Code, Criteria, Except, From, Indication-For, Is-Other, Max-Value, Min-Value, Polarity, Provider, Refers-To, Specimen, Stage, Study-Of and Type}.}
-    \label{aim1_relation_f1}
+    \label{relation_f1}
 \end{table*}
 
 \subsection{Annotation quality evaluation}
-To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{aim1_entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents.
+To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents.
 
 \def\arraystretch{1.2}
 \begin{table}[h!]
@@ -224,10 +240,10 @@ To determine the quality of single-annotated documents compared to those which w
  \hline
 \end{tabular}
 \caption{\textbf{Results of NER experiments using the manually annotated and semi-automated portions of the corpus.} The manually annotated portion includes 513 documents while the semi-automatically annotated portion is 493 documents.}
-\label{aim1_tbl_manual_semiauto}
+\label{tbl_manual_semiauto}
 \end{table}
 
-As the latter near-half (493 documents) of the LCT corpus was automatically annotated, then manually corrected, we also evaluated the quality of the manually annotated portion versus the semi-automatically annotated portion to ensure consistency. We first trained NER models with SciBERT using the manually annotated portion and tested on the semi-automated portion, then reversed the experiment and trained on the semi-automated portion and tested on the manually annotated portion. Results are shown in Table \ref{aim1_tbl_manual_semiauto}.
+As the latter near-half (493 documents) of the LCT corpus was automatically annotated, then manually corrected, we also evaluated the quality of the manually annotated portion versus the semi-automatically annotated portion to ensure consistency. We first trained NER models with SciBERT using the manually annotated portion and tested on the semi-automated portion, then reversed the experiment and trained on the semi-automated portion and tested on the manually annotated portion. Results are shown in Table \ref{tbl_manual_semiauto}.
 
 Results of the experiments when training on both the manually and semi-automatically annotated halves of the corpus show comparable results, with the greatest difference being in precision, with the manual annotation-trained model performing slightly worse (-4.7\%) in prediction versus the semi-automated annotation-trained model. Overall F\textsubscript{1} scores were similar at 78.6\% and 80.0\%, suggesting reasonable consistency across the corpus.
 

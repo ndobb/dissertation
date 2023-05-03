@@ -1,3 +1,4 @@
+\def\arraystretch{0.8}
 \begin{tabular}{m{2cm} m{2.5cm} m{4.9cm} m{6.5cm}}
     \toprule
     \textbf{Category} & \textbf{Entity} & \textbf{Values} & \textbf{Example Text}\\
@@ -15,9 +16,6 @@
      Clinical & Encounter 
             & emergency, outpatient, inpatient 
             & recently $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ to a hospital \\
-     & Immunization 
-            & --
-            & received $\underset{Immunization}{\underline{\mathrm{Influenza\ vaccination}}}$ \\
      & Observation
             & lab, vital, clinical-score, survey, social-habit
             & $\underset{Observation[lab]}{\underline{\mathrm{Platelet\ count}}}$ less than 500 \\
@@ -66,20 +64,20 @@
                 & stable, change 
                 & conditions known to $\underset{Stability[change]}{\underline{\mathrm{affect}}}$ mood \\[2ex]
     \hline
-    \multirow{4}{*}[-17pt]{Comparative} &
+     \multirow{4}{*}[-17pt]{\mbox{Comparative}} &
         Criteria-Count
             & --
             & at least 3 of $\underset{Criteria-Count}{\underline{\mathrm{the\ following\ conditions}}}$: \\
-     & Eq-Comparison
+      & Eq-Comparison
             & --
             & $\underset{Eq-Comparison}{\underline{\mathrm{greater\ than\ 50ml}}}$ \\
      
-     & Eq-Temporal-Period
+      & Eq-Temporal-Period
             & past, present, future
             & $\underset{Eq-Temporal-Period[present]}{\underline{\mathrm{Active}}}$ illness \\
-     & Eq-Temporal-Recency
+      & Eq-Temporal-Recency
             & first-time, most-recent
-            & $\underset{Eq-Temporal-Recency[most-recent]}{\underline{\mathrm{Latest}}}$ BMI > 35 \\
+            & $\underset{Eq-Temporal-Recency[most-recent]}{\underline{\mathrm{Latest}}}$ BMI \\
             
     \hline   
     Other &
