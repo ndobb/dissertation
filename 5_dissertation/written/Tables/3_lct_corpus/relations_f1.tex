@@ -1,58 +1,37 @@
-\begin{tabular}{m{3.8cm} m{2.2cm} m{10cm}}
+\def\arraystretch{0.8}
+\begin{tabular}{l l l c c c}
 \toprule
-    \textbf{Category} & \textbf{Relation} & \textbf{Example Annotation} \\ \midrule
-    
-     & Abbrev-Of     & $\underset{Condition}{\underline{\mathrm{Post\ Concussion\ Syndrome}}}$ \quad $\xleftarrow[Abbrev-Of]{}$ \quad ($\underset{Condition}{\underline{\mathrm{PCS}}}$) \\
-        
-    Alt. and Examples & Equivalent-To & $\underset{Condition}{\underline{\mathrm{Thrombocytopenia}}}$ \quad $\xleftarrow[Equivalent-To]{}$ \quad $\underset{Observation[lab]}{\underline{\mathrm{platelets}}}$ \quad < 100 \\
-    
-     & Example-Of    & $\underset{Condition}{\underline{\mathrm{skin\ condition}}}$ \quad $\xleftarrow[Example-Of]{}$ \quad (e.g. \quad $\underset{Condition}{\underline{\mathrm{eczema}}}$ ) \\[2ex] 
-     
+    \textbf{Category} & \textbf{Relation} & \textbf{Count} & \textbf{SciBERT} & \textbf{R-BERT+SciBERT} \\ \midrule
+     & Abbrev-Of &           462 & 95.2 / 90.9 / 93.0 & 92.3 / 93.1 / 94.2 \\
+    Alternatives and Examples & Equivalent-To & 516 & 61.5 / 69.5 / 65.3 & 59.6 / 67.3 / 63.2 \\
+     &                       Example-Of & 1,497 & 94.8 / 92.9 / 93.8 & 90.5 / 91.7 / 91.1 \\
     \hline
-     
-     Clinical & Contraindicates & conditions \quad  $\underset{Contraindication}{\underline{\mathrm{contraindicating}}}$ \quad $\xrightarrow[Contraindicates]{}$ \quad $\underset{Procedure}{\underline{\mathrm{MRI}}}$ \\[2ex] 
-    
+     &                       Contraindicates & 153 & 90.9 / 90.9 / 90.9 & 90.9 / 90.9 / 90.9 \\
+     &                       Caused-By & 726 & 63.0 / 86.4 / 72.9 & 78.6 / 86.4 / 82.3 \\
+     Clinical &              Found-By & 293 & 90.4 / 59.3 / 71.7 & 79.3 / 71.8 / 75.4 \\
+     &                       Treatment-For & 457 & 69.2 / 69.2 / 69.2 & 61.7 / 74.3 / 67.4 \\
+     &                       Using & 405 & 73.8 / 83.7 / 78.4 & 66.6 / 64.8 / 65.7 \\
     \hline
-    
-    \multirow{4}{*}[-13pt]{\mbox{Dependent}} &
-        Caused-By     & $\underset{Observation}{\underline{\mathrm{swellings}}}$ \quad $\xrightarrow[Caused-By]{}$ \quad $\mathrm{due\ to}$ \quad $\underset{Condition}{\underline{\mathrm{trauma}}}$ \\    
-        
-     & Found-By      & $\underset{Observation}{\underline{\mathrm{lesion}}}$ \quad $\xrightarrow[Found-By]{}$ \quad $\mathrm{seen\ on\ standard}$ \quad $\underset{Procedure}{\underline{\mathrm{imaging}}}$ \\
-    
-     & Treatment-For & $\underset{Procedure}{\underline{\mathrm{coronary\ bypass\ surgery}}}$ \quad $\xrightarrow[Treatment-For]{}$ \quad $\mathrm{for}$ \quad $\underset{Condition}{\underline{\mathrm{atherosclerosis}}}$ \\
-    
-     & Using         & $\underset{Procedure}{\underline{\mathrm{total\ knee\ arthroplasty}}}$ \quad $\xrightarrow[Using]{}$ \quad $\mathrm{with}$ \quad  $\underset{Procedure}{\underline{\mathrm{spinal\ anesthesia}}}$ \\[2ex]
-    
+    \multirow{4}{*}[0pt]{\mbox{Logical}} & And & 821 & 54.1 / 60.0 / 56.9 & 53.8 / 53.8 / 53.8 \\
+     &                       If-Then & 261 & 57.6 / 65.2 / 61.2 & 55.5 / 65.2 / 60.0 \\
+     &                       Negates & 984 & 74.3 / 91.0 / 81.8 & 74.5 / 88.7 / 81.0 \\
+     &                       Or & 4,156 & 85.1 \ 93.2 \ 89.0 & 88.4 / 92.2 / 90.2 \\
     \hline
-    
-    Logical &
-        If-Then       & BMI \quad $\underset{Eq-Comparison}{\underline{\mathrm{greater\ than\ 38}}}$ \quad $\xleftarrow[If-Then]{}$ \quad $\mathrm{for}$ \quad $\underset{Life-Stage-And-Gender[female]}{\underline{\mathrm{women}}}$ \\[2ex]
-         
+     &               Asserted & 1,184 & 83.7 / 89.0 / 86.3 & 85.9 / 89.0 / 87.5 \\
+     &                       Modifies & 3,400 & 90.9 / 94.2 / 92.5 & 92.2 / 95.4 / 93.8 \\
+    Qualifier &               Risk-For & 90 & 92.3 / 85.7 / 88.8 & 92.8 / 92.8 / 92.8 \\
+     &                       Severity & 529 & 80.2 / 96.6 / 87.6 & 86.3 / 96.6 / 91.2 \\
+     &                       Stability & 395 & 76.0 / 92.6 / 83.5 & 76.4 / 95.1 / 84.7 \\
     \hline
-    
-         & Risk-For & $\underset{Risk}{\underline{\mathrm{risk}}}$ \quad $\xrightarrow[Risk-For]{}$ \quad $\mathrm{of}$ \quad $\underset{Death}{\underline{\mathrm{death}}}$ \\
-        Qualifier & Severity & $\underset{Severity[mild]}{\underline{\mathrm{mild}}}$ \quad $\xleftarrow[Severity]{}$ \quad $\underset{Observation}{\underline{\mathrm{symptoms}}}$ \\
-         & Stability & $\underset{Observation}{\underline{\mathrm{hemodynamically}}}$ \quad $\xrightarrow[Stability]{}$ \quad $\underset{Stability[change]}{\underline{\mathrm{unstable}}}$ \\[2ex]
-    
+    \multirow{6}{*}[-5pt]{\mbox{Temporal and Comparative}} & After & 166 & 75.0 / 70.5 / 72.7 & 72.2 / 76.4 / 74.2 \\
+     &                       Before & 320 & 70.2 / 86.6 / 77.6 & 78.1 / 83.3 / 80.6 \\
+     &                       Duration & 243 & 59.3 / 79.1 / 67.8 & 64.5 / 83.3 / 72.7 \\
+     &                       During & 350 & 66.6 / 68.7 / 67.6 & 63.6 / 65.6 / 64.6 \\
+     &                       Numeric-Filter & 1,957 & 84.6 / 93.3 / 88.7 & 85.7 / 92.3 / 88.8 \\
+     &                       Minimum-Count & 173 & 64.2 / 69.2 / 66.7 & 71.4 / 76.9 / 74.0 \\
+     &                       Temporality & 2,645 & 80.7 / 90.7 / 85.4 & 81.8 / 92.2 / 86.7 \\
     \hline
-    
-     &
-        After & $\underset{Condition}{\underline{\mathrm{infected}}}$ \quad $\xrightarrow[After]{}$ \quad $\mathrm{following}$ \quad $\underset{Encounter[inpatient]}{\underline{\mathrm{admission}}}$ \\
-        
-        & Before & $\mathrm{diagnosis of}$ $\underset{Condition}{\underline{\mathrm{aortic\ stenosis}}}$ \quad $\xrightarrow[Before]{}$ \quad $\mathrm{prior\ to}$ \quad $\underset{Encounter}{\underline{\mathrm{visit}}}$ \\
-        
-        & Duration & $\underset{Condition}{\underline{\mathrm{type\ 1\ diabetes}}}$ \quad $\xrightarrow[Duration]{}$ \quad $\mathrm{for}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{at\ least\ 1\ year}}}$ \\ 
-        Comparative & During & $\underset{Procedure}{\underline{\mathrm{mechanically \ ventilated}}}$ \quad $\xrightarrow[During]{}$ \quad $\mathrm{while}$ \quad $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ \\
-        
-         & Numeric-Filter & $\underset{Observation[vital]}{\underline{\mathrm{body\ weight}}}$ \quad $\xrightarrow[Numeric-Filter]{}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{less\ than\ 110\ pounds}}}$ \\    
-        
-         & Minimum-Count & $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ \quad $\xrightarrow[Minimum-Count]{}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{at\ least\ twice}}}$ \\    
-        
-         & Temporality & $\underset{Encounter}{\underline{\mathrm{seen}}}$ \quad $\xrightarrow[Temporality]{}$ \quad $\underset{Eq-Comparison}{\underline{\mathrm{within\ past\ 6\ months}}}$ \\[2ex]
-         
+    Other &                  Location & 207 & 64.2 / 94.7 / 76.6 & 69.2 / 94.7 / 80.0 \\
     \hline
-    
-    Other &
-         Location & $\underset{Encounter[inpatient]}{\underline{\mathrm{admitted}}}$ \quad $\xrightarrow[Location]{}$ \quad $\mathrm{to\ the}$ \quad $\underset{Location[unit]}{\underline{\mathrm{ICU}}}$ \\[2ex]
-    
+    - & Total & 24,379 & 80.2 / 88.2 / 84.0 & 82.5 / 88.0 / 85.2
 \end{tabular}

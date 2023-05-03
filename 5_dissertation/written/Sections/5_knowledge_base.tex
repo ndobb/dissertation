@@ -4,24 +4,37 @@
 
 \section{Overview}
 
+Storing biomedical information such as conceptual mappings, controlled vocabularies and terminologies, synonyms, hyponyms, and hypernyms enables a great variety of useful capabilities for a natural language interface for cohort discovery. For example, enabling users to simply specify "Patients without contraindications to Metformin"\textemdash without needing to exhaustively list what such contraindications may be\textemdash saves user time and energy, and also possibly includes criteria they may not be aware of.  
 
-\section{Related Work}
+This chapter describes the development of our KB, which combines a variety of sources using a graph database of Resource Description Framework (RDF) \cite{manola2004rdf} triples. Section 5.2 describes the data sources used and methods for KB population. Section 5.3 summarizes the work described in this chapter.
 
+\section{Motivation}
+
+While non-specific eligibility criteria can be categorized in a variety of forms, we noticed a number of frequently used patterns during the development of the LCT and LLF corpora. These categories of non-specific criteria formed the basis of the reasoning capabilities we aimed to enabled:
+
+\begin{enumerate}
+    \item \textbf{Treatments for Conditions}, such as \textit{"treated for myocardial infarction"}. Determining whether a patient was treated for this requires first determining what possible treatment options exist for said condition.
+    \item \textbf{Contraindications to Treatments}, for example \textit{"Contraindicated for MRI"} or \textit{"With known contraindications to ACE inhibitors"}. Contraindicated concepts must therefore be searched for procedures, surgical treatments, and drugs (including possible drug-drug interactions).
+    \item \textbf{Observations indicating a Risk}, such as \textit{"At risk for suicide"} or \textit{"At risk for heart attack"}. Possible observations indicating risk thus include those for self-harm (such as depression) as well as underlying disease.
+    \item \textbf{Signs and Symptoms of a Condition}. These may include criteria such as \textit{"Symptoms of depression"} or \textit{"Showing signs of COVID-19"}.
+    \item \textbf{Conditions affecting a Physiological Function}, for example \textit{"Conditions affecting respiration"}.
+    \item \textbf{Indicated Treatments for a Condition}, such as \textit{"Indicated for anticoagulation therapy"} or \textit{"Indicated for endoscopical drainage"}. 
+\end{enumerate}
+
+Beyond facilitating reasoning on non-specific criteria, KBs also serve a vital role in enabling 
 
 \section{Methods}
 
+\subsection{Data Sources}
+
+
+
+
+
 For reasoning and derivation of ICD-10, LOINC, and other codes for UMLS concepts, we designed a KB accessible via SPARQL queries and stored as Resource Description Framework (RDF) \cite{manola2004rdf} triples. The core of our KB is the UMLS, derived using a variation of techniques created for ontologies in BioPortal \cite{noy2009bioportal}. To further augment the UMLS, we mapped and integrated the Disease Ontology \cite{schriml2012disease}, Symptom Ontology \cite{sayers2010database}, COVID-19 Ontology \cite{sargsyan2020covid}, Potential Drug-Drug Interactions \cite{ayvaz2015toward}, LOINC2HPO \cite{zhang2019semantic}, and the Disease-Symptom Knowledge Base \cite{wang2008automated}. We then developed SPARQL queries parameterized by UMLS concepts for various scenarios which leveraged our KB, such as contraindications to treatments, symptoms of diseases, and so on. Using LOINC2HPO mappings further allows us to infer phenotypes by lab test results rather than using ICD-10 or SNOMED codes alone. 
 
-Our KB, nested logical forms, and inside-to-outside normalization methods enable "multi-hop" reasoning on eligibility criteria over several steps. For example, given the non-specific criterion "Contraindications to drugs for conditions which affect respiratory function", our system successfully reasons that (among other results),
+\subsection{Graph Database Development}
 
-\begin{enumerate}
-    \item \textbf{Asthma} causes changes to \textbf{respiratory function}
-    \item \textbf{Methylprednisolone} can be used to treat \textbf{asthma}
-    \item \textbf{Mycosis} (fungal infection) is a contraindication to \textbf{methylprednisolone}
-\end{enumerate}
-
-\noindent These features allow LeafAI to reason upon fairly complex non-specific criteria.
-
-
+\section{Summary}
 
 \end{document}

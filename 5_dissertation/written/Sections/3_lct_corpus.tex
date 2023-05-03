@@ -6,7 +6,7 @@
 
 The NLP tasks involved in transforming eligibility criteria into database queries may include \textbf{named entity recognition} (NER) to tag meaningful spans of text as named entities, \textbf{relation extraction} to classify relations between named entities, \textbf{normalization} to map named entities to common coded representations (e.g., ICD-10), \textbf{negation detection} to detect negated statements (e.g., "not hypertensive") and so on. Gold standard corpora quality can thus directly affect performance and the validation of each of these tasks. Such corpora can serve as reliable benchmarks for purposes of comparing NLP methods as well as training data sets. 
 
-In this chapter we describe the creation of a gold standard corpus of human-annotated clinical trial eligibility criteria and performance data measured during our evaluation. Predictive models trained on this corpus enable and are used in subsequent aims of this project. Section 3.1 discusses related work. Section 3.2 ... This work was published as Dobbins \textit{et al} in 2022 \cite{dobbins2022leaf}.
+In this chapter we describe the creation of a gold standard corpus of human-annotated clinical trial eligibility criteria and performance data measured during our evaluation. Predictive models trained on this corpus enable and are used in subsequent aims of this project. Section Section 3.2 discusses motivations and need for the corpus. Section 3.3 describes the LCT annotation schema. We discuss our evaluation methods in Section 3.4, limitations in Section 3.5, and provide a summary in Section 3.6. This work was published as Dobbins \textit{et al} in 2022 \cite{dobbins2022leaf}.
 
 \section{Motivation}
 
@@ -194,7 +194,6 @@ For relation extraction, we evaluated SciBERT for sequence classification as wel
 
 \def\arraystretch{1.2}
 \begin{table}[h!]
-  \small
   \centering
   \def\arraystretch{1}
   \footnotesize
@@ -203,30 +202,26 @@ For relation extraction, we evaluated SciBERT for sequence classification as wel
   \label{tbl_hyperparams}
 \end{table}
 
-We achieved the highest micro-averaged F\textsubscript{1} score of 81.3\% on entities using SciBERT and 85.2\% on relations using the R-BERT architecture with SciBERT \footnote{A full listing of baseline prediction results can be found with the annotation guidelines at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki/Named-Entity-Recognition-and-Relation-Extraction-performance}. }. Results of representative entities and relations are shown in Tables \ref{entity_f1} and \ref{relation_f1}.
+We achieved the highest micro-averaged F\textsubscript{1} score of 81.3\% on entities using SciBERT and 85.2\% on relations using the R-BERT architecture with SciBERT \footnote{A full listing of baseline prediction results can be found with the annotation guidelines at \url{https://github.com/uw-bionlp/clinical-trials-gov-annotation/wiki/Named-Entity-Recognition-and-Relation-Extraction-performance}. }. Results of representative entities and relations are shown in Tables \ref{tbl_lct_entity_f1} and \ref{tbl_lct_relation_f1}.
 
 \begin{table}[tp]
-    \small
     \centering
-    \def\arraystretch{1.4}
     \footnotesize
     \input{Tables/3_lct_corpus/entities_f1}
     \caption{\textbf{Baseline entity prediction scores (\%, Precision / Recall / F\textsubscript{1}).} Corpus-level micro-averaged scores are shown in the bottom row. For brevity a representative sample of entities is shown. \textit{Count} refers to the total count of unique spans annotated in the entire corpus. Entities included in the total count and scores but omitted for brevity are \textit{Acuteness, Allergy, Condition-Type, Code, Coreference, Ethnicity, Eq-Operator, Eq-Unit, Indication, Immunization, Insurance, Life-Stage-And-Gender, Organism, Other, Specimen, Study and Provider}.}
-    \label{entity_f1}
+    \label{tbl_lct_entity_f1}
 \end{table}
 
 \begin{table*}
-    \small
     \centering
-    \def\arraystretch{1.4}
     \footnotesize
     \input{Tables/3_lct_corpus/relations_f1}
     \caption{\textbf{Baseline relation prediction scores (\%, Precision / Recall / F\textsubscript{1}).} Corpus-level micro-averaged scores are shown in the bottom row. For brevity a representative sample of relations is shown. \textit{Count} refers to the total count annotated in the entire corpus, including relations not shown. The count total excludes general to fine-grained entity relations, which as overlapping spans are not used for relation prediction. Relations included in the total count and scores but omitted for brevity are \textit{Acuteness, Code, Criteria, Except, From, Indication-For, Is-Other, Max-Value, Min-Value, Polarity, Provider, Refers-To, Specimen, Stage, Study-Of and Type}.}
-    \label{relation_f1}
+    \label{tbl_lct_relation_f1}
 \end{table*}
 
 \subsection{Annotation quality evaluation}
-To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents.
+To determine the quality of single-annotated documents compared to those which were double-annotated, we trained NER models (one for general and another for fine-grained entities, as in earlier experiments) using SciBERT with the 887 single-annotated documents and evaluated on the 119 double-annotated documents. The results were a precision of 79.7\%, recall of 82.5\%, and an F\textsubscript{1} score of 81.4\%, which are very close to the highest performance of our randomly split train/test set results shown in Table \ref{tbl_lct_entity_f1}. These results indicate relative uniformity and consistency in the corpus across both single- and double-annotated documents.
 
 \def\arraystretch{1.2}
 \begin{table}[h!]
@@ -247,10 +242,10 @@ As the latter near-half (493 documents) of the LCT corpus was automatically anno
 
 Results of the experiments when training on both the manually and semi-automatically annotated halves of the corpus show comparable results, with the greatest difference being in precision, with the manual annotation-trained model performing slightly worse (-4.7\%) in prediction versus the semi-automated annotation-trained model. Overall F\textsubscript{1} scores were similar at 78.6\% and 80.0\%, suggesting reasonable consistency across the corpus.
 
-\subsection{Limitations}
+\section{Limitations}
 The LCT corpus is designed as a granular and robust resource of annotated eligibility criteria to enable models for entity and relation prediction as means of query generation. The corpus does have a number of limitations however which should be recognized. First, the corpus is largely singly annotated, with 119 of 1,006 documents (11\%) double annotated and reconciled, while double annotation is generally considered to be the gold standard in the NLP research community. However, the reasonably high F\textsubscript{1} score from experiments to evaluate NER when training on the singly annotated portion of the corpus suggests relative consistency of annotation across both single and double annotated documents. Additionally, entities in roughly half of the LCT corpus (493 documents) were automatically predicted, then manually corrected. This can potentially lead to data bias if predicted entities are not thoroughly reviewed and corrected by human annotators. Similar results from our experiments to detect differences in performance by training on the manually annotated portion versus the semi-automatically annotated portion (F\textsubscript{1} scores of 78.6\% and 80.0\%) suggest this may not be not a significant issue.
 
-\subsection{Summary}
+\section{Summary}
 We created the LCT corpus, a gold standard human-annotated corpus of highly granular clinical trial eligibility criteria annotations. The NER and relation extraction models trained on this corpus achieved high performance and enable our subsequent aims.
 
 \end{document}

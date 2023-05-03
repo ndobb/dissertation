@@ -4,9 +4,54 @@
 
 \section{Overview}
 
+This chapter examines the motivation for and creation of the LLF corpus, which we train a Seq2Seq model on for transforming input free-text eligibility criteria into logical forms used for generating database queries. Section 4.2 discusses complications in query generation and motivation for logical form structures. Section 4.3 examines related work in eligibility criteria logical representation. In Section 4.4 we describe steps in creating the corpus annotations. Section 4.5 shows results of our experiments, and Section 4.6 provides a summary of this chapter.
+
+\section{Motivation}
+
+The LCT corpus, as examined in Chapter \ref{chap:lct_corpus}, is a human-annotated corpus of entities and relations within clinical trial eligibility criteria. Entities connected by relations can be imagined as a graph of nodes (entities) and edges (relations) between them. For example, the criterion, \textit{"Diagnosed with type 2 diabetes mellitus within the past 3 years"}, may be represented as a \textit{Condition} node (diabetes mellitus) connecting to a \textit{Equality-Comparison} node (past 3 years) by a \textit{Temporality} edge.
+
+We found SQL query generation using LCT-based graphs to be in many cases error prone and difficult for a number of reasons. First, nested \textit{Or} and \textit{And} relations tend to be problematic when represented as edges within a graph. For example in a criterion such as: \\
+
+\textit{Either of the following:}
+\begin{enumerate}
+    \itemsep0em 
+    \item \textit{BMI $>$ 35 in past 6 months}
+    \item \textit{Previous diagnosis of morbid obesity or obesity with one or more comorbidities}
+\end{enumerate}
+
+\noindent An \textit{Or} relation would exist between \textit{"BMI $>$ 35"} and \textit{"morbid obesity or obesity with one or more comorbidities"}, as well as a nested \textit{Or} between \textit{"morbid obesity"} and \textit{"obesity"} as well as a nested \textit{And} between \textit{"obesity"} and \textit{"comorbidities"}. In such cases, query generation is challenging as a system must recursively evaluate dependencies between entities to determine the scope of Boolean relations. This problem can be doubly challenging as the complexity of the underlying statement means that predictions of entities and relations by models will also necessarily be imperfect.
+
+An alternative to this approach is to use a so-called intermediate representation (IR), which transforms the original natural language by removing "noise" unnecessary to a given task and which more logically represents underlying semantics, also known as a Semantic Parse \cite{kamathsurvey} (see Herzig \textit{et al} \cite{herzig2021unlocking} for an examination of IR-based SQL generation approaches). Similar to earlier work using Description Logics, Roberts and Demner-Fushman \cite{roberts2016annotating} proposed a representation of questions on EHR databases using a comparatively compact but flexible format using first order logic expressions, for example, representing "Is she wheezing this morning?" as
+
+\begin{quote}
+    \centering
+    $\delta( \lambda x.has\_problem(x, C0043144, status) \wedge time\_within(x, \mathrm{"this\ morning"}))$
+\end{quote}
+
+\noindent This style of representation is powerfully generalizable, but also difficult to translate directly into SQL statements as multiple predicates (e.g., \textit{has\_problem} and \textit{time\_within}) may correspond to one or many SQL statements, depending on context, complicating direct transformation into queries.
+
+We thus chose a similar intermediate representation (hereafter simply "logical forms") as proposed by Roberts and Demner-Fushman but more closely resembling a nested functional structure in programming languages such as Python or JavaScript and more amenable to SQL generation. A criterion such as "Diabetic women and men over age 65" would be represented by our logical forms as
+
+\begin{quote}
+$intersect( \\
+    \mathrm{\ \ \ \ }cond("Diabetic"), \\
+    \mathrm{\ \ \ \ }union(female(), male()),\\
+    \mathrm{\ \ \ \ }age().num\_filter(eq(op(GT), val("65"))) \\
+)$
+\end{quote}
+
+\noindent An example input criterion and logical form output is shown in Figure \ref{fig_semantic_parse}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.6]{Figures/4_llf_corpus/semantic_parse.png}  
+\caption{An example semantic parse using the LLF corpus annotation schema. The hypothetical input sentence is on the left, while the corresponding logical form is shown on the right. Indentations and colors have been added for readability.}
+\label{fig_semantic_parse}
+\end{figure}
 
 \section{Related Work}
 
+A number of logical (sometimes called "formal") representations of eligibility criteria have been explored by researchers. These include ad hoc expression languages such as EON \cite{musen1996eon}, SAGE \cite{tu2007sage}, ERGO \cite{sim2004ontology}, and EliXR \cite{weng2011elixr}, typically in tree-like dependency structure, Arden Syntax, a prescribed syntax of operators and operations related to health data \cite{hulse1976computerized}, logic-based languages such as Protégé \cite{musen2015protege} and SQL, and others \cite{sordo2004description,miksch1997asbru,o2002chronus}. See Weng \textit{et al} \cite{weng2010formal} for a comprehensive review. As discussed in the previous section, more recent work by Roberts and Demner-Fushman proposed the use of a First Order Logic-based forms \cite{roberts2016annotating} which have been demonstrated to work well in tasks such as question answering \cite{soni2023quehry}.
 
 \section{Methods}
 
@@ -49,9 +94,11 @@ Following earlier work on task-oriented dialog semantic parsing structures in th
     \item \textbf{Pointer}. Rongali \textit{et al.} \cite{rongali2020don} found that replacing input tokens with "$@ptr_{index}$", where \textit{index} corresponds to a token's sequential position in the input text improved performance in their semantic parsing task. We modified this approach by omitting the characters "ptr" and using the sequential position of the quoted span as our index rather than individual token positions.
 \end{enumerate}
 
+\section{Results}
+
 We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{tbl_llf_corpus}. 
 
-\begin{table}[t!]
+\begin{table}[h]
     \footnotesize
     \centering
     \input{Tables/4_llf_corpus/corpus}
@@ -59,6 +106,9 @@ We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus
     \label{tbl_llf_corpus}
 \end{table} 
 
-We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%, comparing raw text to Standard input styles), demonstrating that leveraging the LCT corpus to generate augmented text achieved relatively high performance (> 93\% BLEU score) for this task. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for LeafAI.
+We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%, comparing raw text to Standard input styles), demonstrating that leveraging the LCT corpus to generate augmented text achieved relatively high performance ($>$ 93\% BLEU score) for this task. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for this project.
+
+\section{Summary}
+We created the LLF corpus, a gold standard human-annotated corpus of 2,000 eligibility criteria and corresponding logical forms. The LLF syntax was developed based on study of past work and entities and relations present in the LCT corpus. Our best performing prediction method using a fine-tuned T5 model achieved $>$ 93\% BLEU score.
 
 \end{document}

@@ -73,7 +73,7 @@ At a high level, query generation is performed in the following steps:
 
 \subsection{Logical form transformation}
 
-\noindent One of the core challenges of generating queries for eligibility criteria is the problem of logical representation. Generating queries directly based on named entities and relations alone, while practical, performs poorly in cases of nested or particularly complex logic. An alternative to this approach is to use a so-called intermediate representation (IR), which transforms the original natural language by removing "noise" unnecessary to a given task and which more logically represents underlying semantics (see Herzig \textit{et al} \cite{herzig2021unlocking} for an examination of IR-based SQL generation approaches). Similar to earlier work using Description Logics, Roberts and Demner-Fushman \cite{roberts2016annotating} proposed a representation of questions on EHR databases using a comparatively compact but flexible format using first order logic expressions, for example, representing "Is she wheezing this morning?" as
+One of the core challenges of generating queries for eligibility criteria is the problem of logical representation. Generating queries directly based on named entities and relations alone, while practical, performs poorly in cases of nested or particularly complex logic. An alternative to this approach is to use a so-called intermediate representation (IR), which transforms the original natural language by removing "noise" unnecessary to a given task and which more logically represents underlying semantics (see Herzig \textit{et al} \cite{herzig2021unlocking} for an examination of IR-based SQL generation approaches). Similar to earlier work using Description Logics, Roberts and Demner-Fushman \cite{roberts2016annotating} proposed a representation of questions on EHR databases using a comparatively compact but flexible format using first order logic expressions, for example, representing "Is she wheezing this morning?" as
 
 \begin{quote}
     \centering
@@ -91,8 +91,6 @@ $intersect( \\
     \mathrm{\ \ \ \ }age().num\_filter(eq(op(GT), val("65"))) \\
 )$
 \end{quote}
-
-\noindent A description of our logical forms annotation schema, corpus, called the Leaf Logical Forms (LLF) corpus, annotation process, and performance metrics can be found in Appendix A.
 
 After NER and relation extraction are performed, we leverage T5 \cite{raffel2020exploring}, a state-of-the-art Seq2Seq architecture we fine-tuned for predicting logical forms on the LLF corpus. As inputs to the Seq2Seq model we use the original eligibility criteria with named entity spans replaced by logical form representations, since we found this improved performance compared to training with raw inputs. Thus the above example input would be transformed to
 
