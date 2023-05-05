@@ -127,12 +127,6 @@ Our KB, nested logical forms, and inside-to-outside normalization methods enable
 
 To enable data model-agnostic query generation, we leveraged a subset of codes within the UMLS in what we define as a semantic metadata mapping, or SMM. An SMM includes a listing of available databases, tables, columns, and so on within a given database schema. Critically, these database artifacts are "tagged" using UMLS concepts. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where the LeafAI query engine finds more than one means of querying a concept (e.g., two SQL tables for diagnosis codes), the queries are combined in a UNION statement.
 
-\begin{figure}[h!]
-  \includegraphics[scale=0.47]{Figures/7_query_generation/leafai_smm.pdf}  
-\caption{The LeafAI query engine's SQL query generation process using two hypothetical database schema to generate queries for platelet counts (shown in logical form after normalization). This example illustrates the flexibility of LeafAI's semantic metadata mapping system (represented here in JSON format) in adapting to virtually any data model. On the left, "Tall Table Structure", platelet counts must be filtered from within a general purpose "labs" table. The LeafAI KB recognizes that labs may be stored as LOINC codes, and the corresponding SMM indicates that records in this table can be filtered to LOINC values. On the right, "Pivoted Table Structure", platelet counts are stored as a specific column in a "complete\_blood\_counts" table, and thus can be directly queried without further filtering. Additional metadata, columns, tables, types and so on needed in SMMs are omitted for brevity.}
-\label{fig_leafai_smm}
-\end{figure}
-
 \section{Experiment Setup}
 
 It is reasonable to expect that an NLP-based system for finding patients based on eligibility criteria would find many  patients who actually enrolled in a real clinical trial — assuming  that patients enrolled in those trials met the necessary criteria as determined by study investigators. While there are caveats to this approach (for example, certain diagnosis codes may be missing for some patients, etc.), we suggest that tools such as LeafAI be evaluated by their ability to handle real-world eligibility criteria and clinical data. 
