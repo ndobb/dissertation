@@ -4,7 +4,7 @@
 
 \section{Overview}
 
-This chapter presents the goals and ongoing development of the LeafAI web application, an interactive user-facing application which integrates with the LeafAI API described in Chapter \ref{chap:query_generation}. We leave evaluation of the web application to future work
+This chapter presents the goals and ongoing development of the LeafAI web application, an interactive user-facing application which integrates with the LeafAI API described in Chapter \ref{chap:query_generation}. As development of the web application is in progress, we leave evaluation of this to future work. Section 8.2 describes related work. Section 8.3 describes methods. Section 8.4 discusses future work, including user testing, and Section 8.5 concludes this chapter. 
 
 \section{Related Work}
 
@@ -44,23 +44,23 @@ Users' sense of system latency and responsiveness can significantly affect their
 
 Consider a hypothetical case where a user begins to type a criteria but misspells "Diabetes Mellitus". Given no notification of the error, the user may take seconds or even minutes of additional typing while adding new criteria without realizing the initial spelling mistake. After the user awaits LeafAI's response, she finds that the query found no patients and is frustrated and confused at the counter-intuitive result, only to finally notice the misspelling, having wasted several minutes. The web application aims to avoid this scenario by preemptively performing NER and normalization while users are typing. Examples of this are shown in Figure \ref{fig_leafai_mouse_hover}. Named entities found within user criteria are underlined and interactive, enabling users to better estimate whether their queries will succeed or not.
 
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
-  \includegraphics[scale=0.55]{Figures/8_web_application/leafai_normalization.png}  
+  \includegraphics[scale=0.55]{Figures/8_web_application/leafai_normalization.pdf}  
   \caption{Normalized named entities identified in user input before query execution. On the left, the system correctly identified "BMI". On the right, "Diabetes Mellitus" is misspelled, and the user is notified.}
 \label{fig_leafai_mouse_hover}
 \end{figure}
 
 Second, as LeafAI generates incremental queries and returns results line by line asynchronously, the user interface shows results as they are reported using a streaming interface. As a result, users will not need to wait until all queries are complete (as in tools such as Leaf and i2b2). An example of this is shown in Figure \ref{fig_leafai_query_progress}.
 
-\begin{figure}[h!]
+Taken together, these features for rapid feedback and transparency also enable \textit{explainability} of system actions. That is, rather than simply returning a final count of patients meeting criteria, The web application provides information both before and during query execution of how the system interpreted user intent and how it has executed a query (e.g. what concepts it found or did not, misinterpreted, etc.). The system responses are generated using templated English expressions mapped to logical form types "slot-filled" using normalized UMLS concept names. By avoiding being a "black box", we aim for the system to gain user trust and understanding of how the system operates.
+
+\begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{Figures/8_web_application/leafai_query_progress.pdf}  
-  \caption{A time-lapse style representation of the user interface asynchronously reporting incremental query results, from top to bottom. This will be performed using two streaming interfaces, one from the clinical database to the API, and a second from the API to the web application.}
+  \includegraphics[scale=0.65]{Figures/8_web_application/leafai_query_progress.pdf}  
+  \caption{A time-lapse representation asynchronously reporting of incremental query results, from top to bottom. This is performed using two streaming interfaces, one from the clinical database to the API, and a second from the API to the web application.}
 \label{fig_leafai_query_progress}
 \end{figure}
-
-Taken together, these features for rapid feedback and transparency also enable \textit{explainability} of system actions. That is, rather than simply returning a final count of patients meeting criteria, The web application provides information both before and during query execution of how the system interpreted user intent and how it has executed a query (e.g. what concepts it found or did not, misinterpreted, etc.). The system responses are generated using templated English expressions mapped to logical form types "slot-filled" using normalized UMLS concept names. By avoiding being a "black box", we aim for the system to gain user trust and understanding of how the system operates.
 
 \subsection{Direct editing of responses enabling iteration}
 
@@ -75,20 +75,20 @@ Data exploration is iterative: users explore, try, and learn over the course of 
 
 For example, after seeing that LeafAI found less patients than expected, a user may realize that she should slightly alter her original query to expand her search. Rather than needing to copy and paste her earlier criteria, instead she will be able to simply click and modify the earlier results.
 
-Additionally, as discussed, the LeafAI query engine is capable of reasoning upon non-specific criteria. In certain cases, however, the system's findings may be incomplete, incorrect, or undesired for various reasons. Rather than forcing users to accept imperfect reasoning, however, the web application allows users to directly enable or disable reasoned concepts. An example of this is shown in Figure \ref{fig_leafai_edit}. In addition to reasoned concepts, the web application enables users to enable and disable named entities from system responses and immediately re-execute queries with a single click. This allows for fast iteration and saves user time, obviating the need to alter the original inputs.
+Additionally, as discussed, the LeafAI query engine is capable of reasoning upon non-specific criteria. In certain cases, however, the system's findings may be incomplete, incorrect, or undesired for various reasons. Rather than forcing users to accept imperfect reasoning, however, the web application allows users to directly enable or disable reasoned concepts. An example of this is shown in Figure \ref{fig_leafai_edit_concepts}. In addition to reasoned concepts, the web application enables users to enable and disable named entities from system responses and immediately re-execute queries with a single click, shown in Figure \ref{fig_leafai_edit_entities}. This allows for fast iteration and saves user time, obviating the need to alter the original inputs.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[scale=0.68]{Figures/8_web_application/leafai_edit.pdf}  
+  \includegraphics[scale=0.68]{Figures/8_web_application/leafai_edit_concepts.pdf}  
   \caption{An example of a user editing concepts discovered using LeafAI's reasoning system. Users are able to enable or disable reasoned concepts.}
-\label{fig_leafai_edit}
+\label{fig_leafai_edit_concepts}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[scale=0.68]{Figures/8_web_application/leafai_edit.pdf}  
+  \includegraphics[scale=0.68]{Figures/8_web_application/leafai_edit_entities.pdf}  
   \caption{An example of a user disabling a named entity from a system response. Named entities can be enabled and disabled by clicking directly on them. Disabled entities are shown with gray colored text and struck through by a line. Upon re-execution, logic for disabled entities is removed from the generated query.}
-\label{fig_leafai_edit}
+\label{fig_leafai_edit_entities}
 \end{figure}
 
 The system's reasoning can thus be described as an optional means of helpfully saving users' time, which can be accepted, edited, or discarded as needed.

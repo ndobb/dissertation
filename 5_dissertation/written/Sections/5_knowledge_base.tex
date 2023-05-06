@@ -127,6 +127,20 @@ WHERE
 \end{lstlisting}
 \def\baselinestretch{1.5}    
 
+\section{Limitations}
+
+Our KB has a number limitations. First, the KB does not have a means of representing severity, probability, significance, or other nuanced relationships between a subject concept and reasoned concepts. For example, the PDDI data source lists certain drug-drug interactions as low in significance or only possible, and thus including those as contraindications may be unhelpful in certain cases. Chapter \ref{chap:web_appplication} demonstrates that users have the ability to edit reasoned concepts in our web application, which we believe makes this an acceptable tradeoff. Second, our KB is capable of providing only UMLS concepts as output, which in certain cases this is not ideal. For example, our KB may return a concept such as "Old age" (C1999167) or "Low Platelet Count" (C5201036), which would be translated downstream into SNOMED or other codes for a structured query. We suspect that in most cases though, determining that a patient is over a certain age or has low platelet counts would be more accurately performed by querying structured demographic or laboratory result data directly (e.g., "WHERE patient\_age >= 65"). In a related fashion, more complex reasoning tasks, such as for patients "Indicated for bariatric surgery", require complex Boolean logic to be represented appropriately:
+
+\begin{quote}
+    \begin{enumerate}
+        \item \textit{Body mass index (BMI) is 40 or higher, called extreme obesity, OR}
+        \item \textit{BMI is 35 to 39.9, called obesity, and have a serious weight-related health problem, such as type 2 diabetes, high blood pressure or severe sleep apnea.}
+        \item \textit{In some cases, BMI is 30 to 34 and have serious weight-related health problems.}\footnote{Adapted from \url{https://www.mayoclinic.org/tests-procedures/bariatric-surgery/about/pac-20394258}}
+    \end{enumerate}
+\end{quote}
+
+Our KB is currently unable to represent reasoning logic like this, as it can respond with only a list of UMLS concepts. In future work, we may examine adaptation of our KB to respond with logical forms (Chapter \ref{chap:llf_corpus}), which would be capable of representing these more complex cases.
+
 \section{Summary}
 
 This chapter describes the motivation and development of our KB, instantiated as a graph database which incorporates the UMLS and numerous other linked sources. Our KB forms the underlying foundation which enables reasoning on non-specific criteria (described in Chapter \ref{chap:query_generation}).

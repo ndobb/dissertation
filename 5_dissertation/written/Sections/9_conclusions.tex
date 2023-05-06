@@ -6,18 +6,30 @@ This dissertation describes the development of a novel database query generation
 
 \section{Contributions}
 
+Recruitment of eligible patients for clinical trials remains a costly and time-consuming challenge, and contributes in many cases to slowing the process of bringing new drugs and treatment options to patients who may benefit from them. The process of identifying patients who may qualify for clinical trial is also challenging, as manual chart review is highly labor intensive, interactive tools such as Leaf are not always able to represent appropriate queries to find patients in EHRs, and the technical expertise needed to run database queries to find patients directly from an EHR database is often a limited resource. Applications leveraging natural language descriptions of eligibility criteria to automatically sift through data and find patients therefore hold great potential to simplify and expedite this process.
+
+It is our hope that the research and software applications described in this dissertation are impactful for real-world clinical trials. We summarize our primary contributions here:
+
 \begin{enumerate}
-    \item \textit{Annotated Corpora}: we introduced two new human-annotated corpora, the Leaf Clinical Trials (LCT) corpus and Leaf Logical Forms (LLF) corpus. The LCT corpus includes a highly granular named entity- and relation-based schema 
-    \item \textit{Model-agnostic query generation}: 
-    \item \textit{Knowledge Base}: 
-    \item \textit{Reasoning upon non-specific criteria}: 
-    \item \textit{Evaluation against a human programmer and actual trial enrollments}: 
+    \item \textit{Annotated Corpora}: we introduced two new human-annotated corpora, the Leaf Clinical Trials (LCT) corpus and Leaf Logical Forms (LLF) corpus. The LCT corpus was developed using a highly granular named entity- and relation-based schema to enable robust query generation for real-world clinical trials and eligibility criteria. The corpus consists of over 1,000 documents of eligibility criteria from clinical trials. Our best performing NER prediction baseline model trained on the corpus achieved an F\textsubscript{1} score of 81.3\%, while our best performing relation extraction model achieved an F\textsubscript{1} score of 85.2\%. The LLF corpus builds upon the LCT corpus by representing 2,000 eligibility criteria lines with corresponding logical intermediate representations, or logical forms. We developed the LLF corpus annotation schema with the aim of creating a data model-agnostic, flexible, robust, and machine-readable representation of the underlying logic of a given criteria. Our best performing model for predicting a logical form from a free-text input achieved a BLEU score of 93.5\%.
+    \item \textit{Model-agnostic query generation}: academic medical centers and research institutions use a variety of clinical database systems and schema. While research-oriented common data models such as OMOP are increasingly used to enable data and tool sharing and cross-institutional analysis, the research database landscape remains heterogeneous. Moreover, many institutions and projects alter common data models in order to accommodate specific project and analysis needs. Because of this, we developed a novel data model-agnostic query generation method enabled by "tagging" clinical database schema metadata using a UMLS concepts in what we call a Semantic Metadata Mapping, or SMM. Our SMM system enables great flexibility in representing a variety of data models, including relatively complex common data models such as OMOP.
+    \item \textit{Knowledge Base}: a natural language interface for identifying cohorts using eligibility criteria requires an external knowledge representation system because humans often use non-specific phrasing and references for brevity and convenience. We developed a graph-based Knowledge Baes, or KB, by integrating a wide variety of publicly available data sets, ontologies, and vocabulary mapping systems, with the Unified Medical Language System, or UMLS, at its core. 
+    \item \textit{Reasoning upon non-specific criteria}: Indirect criterion which frequently appear in eligibility criteria, such as contraindications to a drug, symptoms of a condition, or risks of an outcome, must be reasoned upon in order to determine patients meeting a given criterion. Leveraging our KB and logical forms, we demonstrate a novel inside-to-outside sequential reasoning method which allows our system to generate queries meeting non-specific criteria.
+    \item \textit{Evaluation against a human programmer and actual trial enrollments}: of the natural language interfaces for eligibility criteria developed to date, to our knowledge only one used actual participant enrollments as part of a benchmark, and none compared system performance to that of an experienced human clinical database programmer. In contrast, we evaluated our system's generated queries to that of a human programmer, setting a new and higher benchmark for this task. We demonstrate that our system is able to rival\textemdash and by some measures surpass\textemdash a human programmer in matching patients found by generated queries to those who actually enrolled, with our system identifying 212 of 427 (49\%) total enrolled patients across 8 clinical trials compared to 180 (42\%) found by queries of the human programmer.
 \end{enumerate}
 
 \section{Limitations}
 
-\section{Conclusions and Future Work}
+The research described in this dissertation has a number of limitations, many of which have been described in preceding chapters. The corpora we introduce, the LCT and LLF corpora, were analyzed in great detail to ensure quality, but were nevertheless annotated by non-clinicians, and in any case, likely any human-annotated corpora many contain errors. Models trained on these corpora may also return erroneous output and thus inaccurate queries downstream. Our KB, while containing a wide variety of sources and thus capable of enabling reasoning across many demonstrated use cases, nevertheless lacks functionality to embed probabilities, significance, or caveats to its output, and thus may return erroneous results. We believe these shortcomings are acceptable given that users of our web application may edit any reasoned concepts. 
 
-Future work here
+In our query generation task, it is not clear how well (or poorly) our system may generalize to other kinds of clinical trials outside of the 8 we tested on. Perhaps most importantly, our evaluation underscores the limits of measures system performance of tools such as LeafAI when there exists no true gold standard indicating patients across an entire medical system who would be eligible for a clinical trial. We use known participant enrollments in actual clinical trials but recognize the shortcomings of this approach.
+
+For the web application, as discussed, we have not yet evaluated whether our system meets or exceeds usability and user acceptance standards, nor how well our system compares to previous user-facing systems. 
+
+\section{Future Work}
+
+There are a number of promising avenues for future research which may build upon our findings and systems. We first look forward to testing and improving our web application and query generation methods with robust user testing. Like other self-service tools, it is in the hands of users that the impacts of such systems will be made.
+
+
 
 \end{document}
