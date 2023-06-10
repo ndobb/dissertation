@@ -1,15 +1,17 @@
-\def\arraystretch{1.0}
-\begin{tabular}{l l c c c c c}
-    \textbf{Condition} & \textbf{ID} & \textbf{\# Crit.} & \textbf{\# No Patients} & \textbf{\# Not Computable} & \textbf{\# Executed} \\
+\def\arraystretch{1.4}
+\begin{tabular}{l c |l l l| l l l}
+     & & \multicolumn{3}{c}{\textbf{LeafAI}} & \multicolumn{3}{|c}{\textbf{Human}}  \\
     \toprule
-    Cl Lymphoma        & \footnotesize{NCT04852822} & 4  & 0 (0\%)    & 0 (0\%)    & 4  (100\%)  \\
-    Hepatitis C        & \footnotesize{NCT02786537} & 8  & 0 (0\%)    & 4 (50\%)   & 4  (50\%)   \\
-    Crohn's Disease    & \footnotesize{NCT03782376} & 9  & 0 (0\%)    & 4 (44.4\%) & 5  (55.5\%) \\
-    Cardiac Arrest     & \footnotesize{NCT04217551} & 12 & 0 (0\%)    & 8 (66.6\%) & 4  (33.3\%) \\
-    COVID-19           & \footnotesize{NCT04501952} & 13 & 0 (0\%)    & 6 (46.1\%) & 7  (53.8\%) \\
-    Multiple Sclerosis & \footnotesize{NCT03621761} & 14 & 1 (7.1\%)  & 3 (21.4\%) & 10 (71.4\%) \\
-    Type 1 Diabetes    & \footnotesize{NCT03335371} & 18 & 2 (11.1\%) & 8 (44.4)   & 8  (44.4\%) \\
-    Ovarian Cancer     & \footnotesize{NCT03029611} & 25 & 2 (8\%)    & 9 (36\%)   & 14 (56\%)   \\
+    \textbf{Condition} & \textbf{\# Crit.} & \textbf{No Pats.} & \textbf{Not Comp.} & \textbf{Exec.} & \textbf{No Pats.} & \textbf{Not Comp.} & \textbf{Exec.} \\
+    \toprule
+    Cl Lymphoma        & 4  & 0 (0\%)    & 0 (0\%)   & 4  (100\%) & 0 (0\%)   & 1 (25\%)  & 3 (75\%) \\
+    Hepatitis C        & 8  & 0 (0\%)    & 4 (50\%)  & 4  (50\%)  & 0 (0\%)   & 4 (50\%)  & 4 (50\%) \\
+    Crohn's Disease    & 9  & 0 (0\%)    & 4 (44\%)  & 5  (55\%)  & 3 (33\%)  & 3 (33\%)  & 3 (33\%) \\
+    Cardiac Arrest     & 12 & 0 (0\%)    & 8 (66\%)  & 4  (33\%)  & 2 (16\%)  & 5 (41\%)  & 5 (41\%) \\
+    COVID-19           & 13 & 0 (0\%)    & 6 (46\%)  & 7  (53\%)  & 0 (0\%)   & 7 (53\%)  & 6 (46\%) \\
+    Multiple Sclerosis & 14 & 1 (7\%)    & 3 (21\%)  & 10 (71\%)  & 1 (7\%)   & 5 (35\%)  & 8 (57\%) \\
+    Type 1 Diabetes    & 18 & 2 (11\%)   & 8 (44\%)  & 8  (44\%)  & 4 (22\%)  & 6 (33\%)  & 8 (44\%) \\
+    Ovarian Cancer     & 25 & 2 (8\%)    & 9 (36\%)  & 14 (56\%)  & 1 (4\%)   & 9 (36\%)  & 15 (60\%) \\
     \bottomrule
-    \textbf{Total} &     & 103 & 5 (4.8\%) & 42 (40.7\%) & 61 (59.3\%)
+    \textbf{Total}     & 103 & 5 (5\%)   & 42 (41\%) & 56 (54\%)  & 11 (10\%) & 40 (39\%) & 52 (50\%) \\
 \end{tabular}

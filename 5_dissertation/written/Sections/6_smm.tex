@@ -4,7 +4,7 @@
 
 \section{Overview}
 
-Any system which aims to generate queries to fulfill an aim or process will be necessarily limited in utility if it operates with only a single database schema. Within the health domain, data structures and vocabularies are increasingly complex and diverse, and systems capable of generalizing to other data models and institutions stand to be more impactful. Even the OMOP common data model, though widely used, is often updated to include custom database tables and data to fulfill various real-world needs \cite{belenkaya2021extending, peng2021towards, zoch2021adaption, warner2019hemonc, zhou2013evaluation, shin2019genomic, kwon2019development}. 
+Any system which aims to generate queries to fulfill an aim or process will be necessarily limited in utility if it operates with only a single static database schema. Within the health domain, data structures and vocabularies are increasingly complex and diverse, and systems capable of generalizing to other data models and institutions stand to be more impactful. Even the OMOP common data model, though widely used, is often updated to include custom database tables and data to fulfill various project-specific needs \cite{belenkaya2021extending, peng2021towards, zoch2021adaption, warner2019hemonc, zhou2013evaluation, shin2019genomic, kwon2019development}. 
 
 This chapter explores what we call a Semantic Metadata Mapping, or SMM, which we leverage as a data-model agnostic means of generating queries for eligibility criteria. Section 6.2 explores related work. Section 6.3 discusses SMM structure and configuration. Section 6.4 summarizes the work of this chapter.
 
@@ -94,7 +94,7 @@ The use of UMLS concepts, SABs, and optional conditions for each enables query g
 
 \section{Limitations}
 
-Our SMM implementation is limited in a number of ways, most notably in that our tagging schema is not entirely machine readable. Specifically, the use of optional conditions in the form of SQL WHERE clauses implemented as simple strings (e.g., "WHERE IsPrimaryDx = 1") means that our system does not enable "understanding" of actual filtering logic or tuple-level values, but rather simply trusts that the given string will filter the condition as expected. In this sense the SQL WHERE strings are a "black box" to the SMM from a systems perspective. A more robust SMM representation may perhaps annotate tuple-level values semantically at a more granular level, though this would necessarily entail far more work on the part of the annotator in exhaustively describing every possible value of every column in a database.
+Our SMM implementation is limited in a number of ways, most notably in that our tagging schema is not entirely machine readable. Specifically, the use of optional conditions in the form of SQL WHERE clauses implemented as simple strings (e.g., "WHERE IsPrimaryDx = 1") means that an SMM does not carry granular semantic information of actual filtering logic or tuple-level values, but rather simply trusts that a given SQL condition will filter as expected. In this sense the SQL WHERE strings are a "black box" to the SMM from a systems perspective. A more robust SMM representation may perhaps annotate tuple-level values semantically at a more granular level, though this would necessarily entail far more work on the part of the annotator in exhaustively describing every possible value of every column in a database.
 
 \section{Summary}
 

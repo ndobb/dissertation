@@ -10,7 +10,7 @@ This chapter examines the motivation for and creation of the LLF corpus, which w
 
 The LCT corpus, as examined in Chapter \ref{chap:lct_corpus}, is a human-annotated corpus of entities and relations within clinical trial eligibility criteria. Entities connected by relations can be imagined as a graph of nodes (entities) and edges (relations) between them. For example, the criterion, \textit{"Diagnosed with type 2 diabetes mellitus within the past 3 years"}, may be represented as a \textit{Condition} node (diabetes mellitus) connecting to a \textit{Equality-Comparison} node (past 3 years) by a \textit{Temporality} edge.
 
-We found SQL query generation using LCT-based graphs to be in many cases error prone and difficult for a number of reasons. First, nested \textit{Or} and \textit{And} relations tend to be problematic when represented as edges within a graph. For example in a criterion such as: \\
+We found SQL query generation using LCT-based graphs to be in many cases error prone and difficult for a number of reasons. First, nested \textit{Or} and \textit{And} relations tend to be problematic when represented as edges within a graph. For example, in a criterion such as: \\
 
 \textit{Either of the following:}
 \begin{enumerate}

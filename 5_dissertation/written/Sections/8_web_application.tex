@@ -24,12 +24,12 @@ A chat-like interface for cohort discovery is both novel and a logical design ch
 \label{fig_leafai_demo}
 \end{figure}
 
-The web application responds to user input in a visual form that is chat-\textit{like}, rather than the result of a general programmatic conversation agent. While the user interface and query generation methods lay a potential foundation for general-purpose question-answering more akin to a conversation agent, we limit our scope to cohort discovery. The user interface is being designed with the following goals:
+The web application responds to user input in a visual form that is chat-\textit{like}, rather than the result of a general programmatic conversation agent. While the user interface and query generation methods lay a potential foundation for general-purpose question-answering more akin to a conversation agent, we limit our scope to cohort discovery. The user interface was designed with the following goals:
 
 \begin{enumerate}
     \item \textbf{Accessible history}. Users will be able to immediately scroll to view previous findings.
-    \item \textbf{Rapid feedback and explainability}. LeafAI while perform NER and normalization as users are typing, similar to prefetching search engine responses. This will allow users to preemptively detect concepts and queries which may return unexpected results. LeafAI will also display incremental query results in real-time, providing users faster feedback so users may avoid waiting until all query results are complete.
-    \item \textbf{Direct editing of responses enabling iteration}. As LeafAI returns results of patients found, the eligibility criteria used in a query will be directly edit-able, saving users' time and facilitating quick iteration to find intended patients.
+    \item \textbf{Rapid feedback and explainability}. The application performs NER and normalization as users type. This allows users to preemptively detect concepts and queries which may return unexpected results. The application also returns incremental query results in real-time, providing immediate feedback so users may avoid waiting until all query results are complete.
+    \item \textbf{Direct editing of responses enabling iteration}. As the application returns results of patients found, the eligibility criteria used in a query will be directly edit-able, saving users' time and facilitating quick iteration to find intended patients.
 \end{enumerate}
 
 \noindent We next describe each goal in detail.
@@ -42,7 +42,7 @@ Cohort discovery is a form of data exploration. As Derthick and Roth write, "...
 
 Users' sense of system latency and responsiveness can significantly affect their satisfaction in using a tool \cite{li2019effects, arapakis2014impact, shneiderman1984response}. Faster \textit{preemptive} system responses (i.e., informing users' of a possible consequence before they complete an action) can also both save users' time and reduce loads placed upon systems by preventing unnecessary actions \cite{lempel2003predictive, diaz2016search}. The web application employs two general strategies for providing rapid feedback to users, one before queries are executed, and the second while results are being reported during query execution.
 
-Consider a hypothetical case where a user begins to type a criteria but misspells "Diabetes Mellitus". Given no notification of the error, the user may take seconds or even minutes of additional typing while adding new criteria without realizing the initial spelling mistake. After the user awaits LeafAI's response, she finds that the query found no patients and is frustrated and confused at the counter-intuitive result, only to finally notice the misspelling, having wasted several minutes. The web application aims to avoid this scenario by preemptively performing NER and normalization while users are typing. Examples of this are shown in Figure \ref{fig_leafai_mouse_hover}. Named entities found within user criteria are underlined and interactive, enabling users to better estimate whether their queries will succeed or not.
+Consider a hypothetical case where a user begins to type a criteria but misspells "Diabetes Mellitus". Given no notification of the error, the user may take seconds or even minutes of additional typing while adding new criteria without realizing the initial spelling mistake. After the user awaits LeafAI's response, she finds that the query found no patients and is frustrated and confused at the counter-intuitive result, only to finally notice the misspelling, having wasted several minutes. The application avoids this scenario by preemptively performing NER and normalization while users are typing. Examples of this are shown in Figure \ref{fig_leafai_mouse_hover}. Named entities found within user criteria are underlined and interactive, enabling users to better estimate whether their queries will succeed or not.
 
 \begin{figure}[H]
   \centering
@@ -51,9 +51,9 @@ Consider a hypothetical case where a user begins to type a criteria but misspell
 \label{fig_leafai_mouse_hover}
 \end{figure}
 
-Second, as LeafAI generates incremental queries and returns results line by line asynchronously, the user interface shows results as they are reported using a streaming interface. As a result, users will not need to wait until all queries are complete (as in tools such as Leaf and i2b2). An example of this is shown in Figure \ref{fig_leafai_query_progress}.
+Second, as LeafAI generates incremental queries and returns results line by line asynchronously, the user interface shows results as they are reported using a streaming interface. As a result, users do not need to wait until all queries are complete to obtain visual feedback as to query results (as in tools such as Leaf and i2b2). An example of this is shown in Figure \ref{fig_leafai_query_progress}.
 
-Taken together, these features for rapid feedback and transparency also enable \textit{explainability} of system actions. That is, rather than simply returning a final count of patients meeting criteria, The web application provides information both before and during query execution of how the system interpreted user intent and how it has executed a query (e.g. what concepts it found or did not, misinterpreted, etc.). The system responses are generated using templated English expressions mapped to logical form types "slot-filled" using normalized UMLS concept names. By avoiding being a "black box", we aim for the system to gain user trust and understanding of how the system operates.
+Taken together, these features for rapid feedback and transparency also enable \textit{explainability} of system actions. Rather than simply returning a final count of patients meeting criteria, The user interface provides information both before and during query execution of how the system interpreted user intent and how it has executed a query (e.g. what concepts it found or did not, misinterpreted, etc.). System responses are generated using templated English expressions mapped to logical form types using normalized UMLS concept names. By avoiding being a "black box", the user interface is designed to gain user trust and understanding of how the system operates.
 
 \begin{figure}[H]
   \centering
@@ -64,7 +64,7 @@ Taken together, these features for rapid feedback and transparency also enable \
 
 \subsection{Direct editing of responses enabling iteration}
 
-Data exploration is iterative: users explore, try, and learn over the course of multiple attempts. As discussed, faster, meaningful results also directly affect user satisfaction. To this end, the web application enables users to immediately and directly edit the returned system respones. This workflow is depicted in Figure \ref{fig_leafai_feedback_loop}. 
+Data exploration is iterative: users explore, try, and learn over the course of multiple attempts. As discussed, faster, meaningful results also directly affect user satisfaction. To this end, the web application enables users to immediately and directly edit the returned system responses. This workflow is depicted in Figure \ref{fig_leafai_feedback_loop}. 
 
 \begin{figure}[h!]
   \centering
@@ -73,9 +73,9 @@ Data exploration is iterative: users explore, try, and learn over the course of 
 \label{fig_leafai_feedback_loop}
 \end{figure}
 
-For example, after seeing that LeafAI found less patients than expected, a user may realize that she should slightly alter her original query to expand her search. Rather than needing to copy and paste her earlier criteria, instead she will be able to simply click and modify the earlier results.
+For example, after seeing that LeafAI found less patients than expected, a user may realize that she should slightly alter her original query to expand her search. Rather than needing to copy and paste her earlier criteria, instead she is able to simply click and modify the earlier results.
 
-Additionally, as discussed, the LeafAI query engine is capable of reasoning upon non-specific criteria. In certain cases, however, the system's findings may be incomplete, incorrect, or undesired for various reasons. Rather than forcing users to accept imperfect reasoning, however, the web application allows users to directly enable or disable reasoned concepts. An example of this is shown in Figure \ref{fig_leafai_edit_concepts}. In addition to reasoned concepts, the web application enables users to enable and disable named entities from system responses and immediately re-execute queries with a single click, shown in Figure \ref{fig_leafai_edit_entities}. This allows for fast iteration and saves user time, obviating the need to alter the original inputs.
+Additionally, as discussed, the LeafAI query engine is capable of reasoning upon non-specific criteria. In certain cases, however, the system's findings may be incomplete, incorrect, or undesired for various reasons. Rather than forcing users to accept imperfect reasoning, however, the user interface allows users to directly enable or disable reasoned concepts. An example of this is shown in Figure \ref{fig_leafai_edit_concepts}. In addition to reasoned concepts, the interface enables users to enable and disable named entities from system responses and immediately re-execute queries with a single click, shown in Figure \ref{fig_leafai_edit_entities}. This allows for fast iteration and saves user time, obviating the need to alter the original inputs.
 
 \begin{figure}[h!]
   \centering
@@ -95,7 +95,7 @@ The system's reasoning can thus be described as an optional means of helpfully s
 
 \subsection{Model Inference Speed}
 
-LeafAI's modules for NER, logical form transformation, lab normalization and so on use large Transformer-based neural models \cite{vaswani2017attention} with millions of parameters. Using these models as-is for inference can be slow, particularly when performed using CPUs rather than more costly but often far faster GPUs (Graphics Processing Units). Delays in inference time in turn can result in poor system latency, affecting user satisfaction. We further assume that institutions or individuals deploying LeafAI may not necessarily have access to GPUs. To improve inference speed on CPUs, we intend to quantize our models, a process for converting 32-bit floating point values within model weights and biases to 8-bit integers. Quantization has been shown to dramatically reduce model storage size and memory usage and improve inference speed while typically showing limited decreases in performance \cite{hubara2017quantized}. 
+LeafAI's modules for NER, logical form transformation, lab normalization and so on use large Transformer-based neural models \cite{vaswani2017attention} with millions of parameters. Using these models as-is for inference can be slow, particularly when performed using CPUs rather than more costly but often far faster GPUs (Graphics Processing Units). Delays in inference time in turn can result in poor system latency, affecting user satisfaction. We further assume that institutions or individuals deploying LeafAI may not necessarily have access to GPUs. To improve inference speed on CPUs, models are quantized, a process for converting 32-bit floating point values within model weights and biases to 8-bit integers. Quantization has been shown to dramatically reduce model storage size and memory usage and improve inference speed while typically showing limited decreases in performance \cite{hubara2017quantized}. 
 
 \section{Future Work}
 
