@@ -31,7 +31,7 @@ This chapter describes the development of our KB, which combines a variety of so
 
 \section{Motivation}
 
-While non-specific eligibility criteria can be categorized in a variety of forms, we noticed a number of frequently used patterns during the development of the LCT and LLF corpora. We focused on enabling reasoning upon the following non-specific criteria categories:
+While non-specific eligibility criteria can be categorized in a variety of forms, we found a number of frequently used patterns during the development of the LCT and LLF corpora. We focused on enabling reasoning upon the following non-specific criteria categories:
 
 \begin{enumerate}
     \item \textbf{Treatments for Conditions}, such as \textit{"treated for myocardial infarction"}. Determining whether a patient was treated for this requires first determining what possible treatment options exist for said condition.
@@ -59,7 +59,7 @@ Given its widespread use and breadth of vocabulary and terminology coverage, we 
     \item \textbf{LOINC2HPO} \cite{zhang2019semantic}. LOINC2HPO is a data set of approximately 3,000 laboratory tests with corresponding phenotypes depending on their results (e.g., high, low, normal, positive, negative) linked to the Human Phenotype Ontology (which in turn is included in the UMLS). While not directly related to our reasoning use cases, we incorporated LOINC2HPO in order to find patients who may not have diagnosis codes for a given condition but whom a condition could be inferred via laboratory test results.
 \end{enumerate}
 
-We further integrated a number of vocabulary mappings which we found potentially useful and not present within the UMLS. For example, an eligibility criteria may specify "Patients mechanically ventilated", which would be normalized to concept C0199470 ("Mechanical Ventilation") using MetaMapLite (discussed in Chapter \ref{chap:query_generation}). Within the UMLS however, C0199470 is not associated with any ICD-10 PCS codes, while within our enterprise data warehouse, mechanical ventilation events are recorded using ICD-10 PCS codes such as "5A19352", which relate to a different concept, C2695822 ("Respiratory Ventilation, Less than 24 Consecutive Hours"). As these concepts and codes are not linked within the UMLS, our KB would not be able to appropriately generate a database query to find mechanically ventilated patients. Using the following sources, however, enables our KB to fill this gap (among many others):
+We further integrated a number of vocabulary mappings which we found potentially useful and not present within the UMLS. For example, an eligibility criteria may specify "Patients mechanically ventilated", which would be normalized to concept C0199470 ("Mechanical Ventilation") using MetaMapLite (discussed in Chapter \ref{chap:query_generation}). Within the UMLS however, C0199470 is not associated with any ICD-10 PCS codes, while within EHRs, mechanical ventilation events are recorded using ICD-10 PCS codes such as "5A19352", which relate to a different concept, C2695822 ("Respiratory Ventilation, Less than 24 Consecutive Hours"). As these concepts and codes are not linked within the UMLS, our KB would not be able to appropriately generate a database query to find mechanically ventilated patients. Using the following sources, however, enables our KB to fill this gap (among many others):
 
 \begin{enumerate}
     \item \textbf{ICD-9-CM to and from ICD-10-CM and ICD-10-PCS Crosswalk or General Equivalence Mappings} \cite{icd9_icd10_icd10pcs}
@@ -72,7 +72,7 @@ The integration of these additional mappings enable our KB to derive codes for a
 
 \subsection{Graph Database Population}
 
-A KB is an abstract, rather than technical concept, which may be instantiated as a relational or document database, graph, or other data structure. The practical needs and use cases related to eligibility criteria in this project drew us toward the use of a graph database as an optimal solution. An extensive comparison of graph databases versus relational or other databases is outside the scope of this discussion. In brief however, both graph and relational databases are capable of storing data encompassing the same linkages and tuples \cite{priyatna2014formalisation}, though by different means. Generally speaking, graph databases enable a more succinct query syntax (i.e., the same data extract can be accomplished using graph database queries linking tuples than one using a large number of SQL JOIN operations) and further do not necessitate a predefined schema, making them ideal for linking and exploring heterogeneous data sources.
+A KB is an abstract, rather than technical concept, which may be instantiated as a relational or document database, graph, or other data structure. The practical needs and use cases related to eligibility criteria in this project drew us toward the use of a graph database representation. An extensive comparison of graph databases versus relational or other databases is outside the scope of this discussion. In brief however, both graph and relational databases are capable of storing data encompassing the same linkages and tuples \cite{priyatna2014formalisation}, though by different means. Generally speaking, graph databases often enable a more succinct query syntax (i.e., the same data extract can be accomplished using graph database queries linking tuples than one using a large number of SQL JOIN operations) and further do not necessitate a predefined schema, making them ideal for linking and exploring heterogeneous data sources.
 
 We used GraphDB \cite{graphdb}, a robust commercial graph database platform which is free for research use as our KB. To populate our KB, we modified open-source extraction scripts used for BioPortal \cite{noy2009bioportal} which extract UMLS data representations from a SQL database and output into the RDF-compatible format, Terse RDF Triple Language (Turtle) \cite{ttl}. In the original BioPortal extraction scripts\footnote{https://github.com/ncbo/umls2rdf}, UMLS CUIs are represented as strings, such as "C0150840", rather than Internationalized Resource Identifiers (IRIs), such as
 
@@ -87,7 +87,7 @@ $<http://bioportal.bioontology.org/ontologies/ umls\#C0150840>$.
 
 After data were loaded in the KB, we developed SPARQL queries for each reasoning and hierarchy traversal use case. SPARQL is a graph query language developed by the W3C and features a syntax relatively similar to SQL \cite{sparql}. For SPARQL queries related to reasoning use cases, development generally involved exploration of UMLS relations across various vocabularies, in addition to non-UMLS sources in our KB. In cases where more than one relation type was found, we traversed tuples from multiple vocabularies using $UNION$ or $IN (<relation1, relation2, ...>)$ syntax.
 
-Below is an example of a SPARQL query for extracting concepts related to a sign or symptom. The script accepts a $@cui$ parameter and traverses the KB, outputting sign and symptom-related CUIs and metadata from the DSKB, DO, and Omaha System ontologies (the latter contained within the UMLS but not updated since 2007).  \\
+Below is an example of a SPARQL query for extracting concepts related to a sign or symptom. The script accepts a $@cui$ parameter and traverses the KB, outputting sign and symptom-related CUIs and metadata from the DSKB, DO, and Omaha System ontologies:  \\
 
 \def\baselinestretch{1.0}    
 \begin{lstlisting}
@@ -129,7 +129,9 @@ WHERE
 
 \section{Limitations}
 
-Our KB has a number limitations. First, the KB does not have a means of representing severity, probability, significance, or other nuanced relationships between a subject concept and reasoned concepts. For example, the PDDI data source lists certain drug-drug interactions as low in significance or only possible, and thus including those as contraindications may be unhelpful in certain cases. Chapter \ref{chap:web_appplication} demonstrates that users have the ability to edit reasoned concepts in our web application, which we believe makes this an acceptable tradeoff. Second, our KB is capable of providing only UMLS concepts as output, which in certain cases this is not ideal. For example, our KB may return a concept such as "Old age" (C1999167) or "Low Platelet Count" (C5201036), which would be translated downstream into SNOMED or other codes for a structured query. We suspect that in most cases though, determining that a patient is over a certain age or has low platelet counts would be more accurately performed by querying structured demographic or laboratory result data directly (e.g., \textit{"WHERE} $patient\_age >= 65"$). In a related fashion, more complex reasoning tasks, such as for patients "Indicated for bariatric surgery", require complex Boolean logic to be represented appropriately:
+Our KB has a number limitations. First, the KB does not have a means of representing severity, probability, significance, or other nuanced relationships between a subject concept and reasoned concepts. For example, the PDDI data source lists certain drug-drug interactions as low in significance or only possible, and thus including those as contraindications may be unhelpful in certain cases. Chapter \ref{chap:web_appplication} demonstrates that users have the ability to edit reasoned concepts in our web application, which we believe makes this an acceptable tradeoff. Second, our KB is capable of providing only lists of UMLS concepts as output, which in certain cases is not ideal. For example, our KB may return a concept such as "Old age" (C1999167) or "Low Platelet Count" (C5201036), which would be translated downstream into SNOMED or other codes for a structured query. We suspect that in most cases though, determining that a patient is over a certain age or has low platelet counts would be more accurately performed by querying structured demographic or laboratory result data directly (e.g., \textit{"WHERE} $patient\_age >= 65"$). 
+
+In a related fashion, more complex reasoning tasks, such as for patients "Indicated for bariatric surgery", require complex Boolean logic to be represented appropriately. For example, the Mayo Clinic describes indications as follows, using multiple levels of nested Boolean logic:
 
 \begin{quote}
     \begin{enumerate}
@@ -139,7 +141,7 @@ Our KB has a number limitations. First, the KB does not have a means of represen
     \end{enumerate}
 \end{quote}
 
-Our KB is currently unable to represent reasoning logic like this, as it can respond with only a list of UMLS concepts. In future work, we may examine adaptation of our KB to respond with logical forms (Chapter \ref{chap:llf_corpus}), which would be capable of representing these more complex cases.
+Our KB is unable to represent reasoning logic like this, as it can respond with only a list of UMLS concepts. In future work, we may examine adaptation of our KB to respond with logical forms (Chapter \ref{chap:llf_corpus}), which would be capable of representing these more complex cases.
 
 \section{Summary}
 

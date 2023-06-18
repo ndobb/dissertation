@@ -4,13 +4,21 @@
 
 \section{Overview}
 
-This chapter examines the motivation for and creation of the LLF corpus, which we train a Seq2Seq model on for transforming input free-text eligibility criteria into logical forms used for generating database queries. Section 4.2 discusses complications in query generation and motivation for logical form structures. Section 4.3 examines related work in eligibility criteria logical representation. In Section 4.4 we describe steps in creating the corpus annotations. Section 4.5 shows results of our experiments, and Section 4.6 provides a summary of this chapter.
+This chapter examines the motivation for and creation of the LLF corpus, which we train a Seq2Seq model on for transforming input free-text eligibility criteria into logical forms used for generating database queries. Section 4.2 discusses complications in query generation and motivation for logical form structures. Section 4.3 examines related work in eligibility criteria logical representation. In Section 4.4 we describe steps in creating the corpus annotations. Section 4.5 shows results of our experiments, and Section 4.6 provides a summary of this chapter. The resulting Seq2Seq model described here, as well as components described in Chapters \ref{chap:kb} and \ref{chap:smm} are used within the query system and evaluation described in Chapter \ref{chap:query_generation}.
 
 \section{Motivation}
 
-The LCT corpus, as examined in Chapter \ref{chap:lct_corpus}, is a human-annotated corpus of entities and relations within clinical trial eligibility criteria. Entities connected by relations can be imagined as a graph of nodes (entities) and edges (relations) between them. For example, the criterion, \textit{"Diagnosed with type 2 diabetes mellitus within the past 3 years"}, may be represented as a \textit{Condition} node (diabetes mellitus) connecting to a \textit{Equality-Comparison} node (past 3 years) by a \textit{Temporality} edge.
+The LCT corpus, as examined in Chapter \ref{chap:lct_corpus}, is a human-annotated corpus of entities and relations within clinical trial eligibility criteria. Entities connected by relations can be imagined as a graph of nodes (entities) and edges (relations) between them. For example, the criterion, \textit{"Diagnosed with type 2 diabetes mellitus within the past 3 years"}, may be represented as a \textit{Condition} node ("type 2 diabetes mellitus") connecting to a \textit{Equality-Comparison} node ("past 3 years") by a \textit{Temporality} edge: \\
 
-We found SQL query generation using LCT-based graphs to be in many cases error prone and difficult for a number of reasons. First, nested \textit{Or} and \textit{And} relations tend to be problematic when represented as edges within a graph. For example, in a criterion such as: \\
+\begin{center}
+\begin{tabular}{c c c}
+    "type 2 diabetes mellitus" & & "past 3 years" \\ 
+    \big\downarrow & & \big\downarrow \\
+    \textit{Condition} & $\xrightarrow[Temporality]{}$ & \textit{Equality-Comparison} \\ \\
+\end{tabular}
+\end{center}
+
+We found SQL query generation using LCT-based graphs to be in many cases error prone and challenging. In particular, nested relations, such as \textit{Or} and \textit{And}, tend to be problematic when represented as edges within a graph. For example, in a criterion such as: \\
 
 \textit{Either of the following:}
 \begin{enumerate}
@@ -42,7 +50,7 @@ $intersect( \\
 
 \noindent An example input criterion and logical form output is shown in Figure \ref{fig_semantic_parse}.
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
   \centering
   \includegraphics[scale=0.6]{Figures/4_llf_corpus/semantic_parse.png}  
 \caption{An example semantic parse using the LLF corpus annotation schema. The hypothetical input sentence is on the left, while the corresponding logical form is shown on the right. Indentations and colors have been added for readability.}
@@ -98,7 +106,7 @@ Following earlier work on task-oriented dialog semantic parsing structures in th
 
 We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{tbl_llf_corpus}. 
 
-\begin{table}[ht]
+\begin{table}[!ht]
     \footnotesize
     \centering
     \input{Tables/4_llf_corpus/corpus}
