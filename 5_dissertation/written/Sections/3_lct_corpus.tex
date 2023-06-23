@@ -112,6 +112,8 @@ The example expression "Ages 18-55 years old" would be annotated in three layers
 \end{tabular}
 \end{center}
 
+\vspace{0.5cm}
+
 This multilayered annotation strategy allows significant flexibility in capturing entities and relations in a slot-filling fashion, simplifying the task of downstream query generation.
 
 The LCT annotation schema contributes the following novel features: (1) deep granularity in entities and relations, which enables (2) rich semantic representation, closely capturing the intent of complex clinical trial eligibility criteria and facilitating accurate query generation. \\
@@ -129,6 +131,8 @@ In contrast, we designed the LCT annotation schema to favor discrete, explicit e
     \textit{[past]} & & \textit{[month]} \\
 \end{tabular}
 \end{center}
+
+\vspace{0.5cm}
 
 \noindent As shown in the example, each token is uniquely annotated, with the values \textit{[past]} and \textit{[month]} serving to more clearly disambiguate semantics of the temporal phrase to a normalized temporal value. Moreover, as fine-grained entities are connected by relations to general entities, which can in turn have relations to other general entities, the LCT annotation schema is able to capture eligibility criteria semantics at a deeper level than other corpora. \\
 
@@ -157,6 +161,135 @@ We designed the LCT annotation schema by building upon the important previous wo
     \caption{Examples of clinical trials eligibility criteria annotated with Chia and LCT annotation schemas. Each example shows a criterion from a Chia annotation (above) and an LCT annotation of the same text for purposes of comparison (below).}
 \label{fig_chia_vs_lct}
 \end{figure}
+
+\subsubsection{Capturing Entity Semantics}
+\noindent Example 2 of Figure \ref{fig_chia_vs_lct} demonstrates the need to closely capture semantics in clinical trials eligibility criteria for unnamed entities. The span "Medication" in "Medication[s] which affect glycemic control" refers to \textit{any} drug which potentially affects glycemic control. As discussed, the LCT annotation schema uses \textit{Name} entities to handle such cases, where the absence in this example of a \textit{Drug-Name} entity indicates that "Medication" refers to any drug, and thus may need to be determined by downstream use of a knowledge base or other methods. \\
+
+\noindent As can be seen, Chia does not differentiate between named and unspecified drugs, conditions, procedures and so on. While it is true that for query generation one may need to normalize these spans to coded representations (e.g., ICD-10, RxNorm or LOINC codes) and may in the process find that the span "Medication" is not a particular medication (and thus can be assumed to be \textit{any} medication), such a workaround nonetheless complicates usage of the corpus in finding and handling such cases in a more direct, less error-prone way. \\
+
+\noindent Consider also the phrase, "after age 30" in example 4 in Figure \ref{fig_chia_vs_lct}. In Chia, disambiguation of time units, values, and chronological tense must be performed by additional processing, as the Chia \textit{Value} entity provides no information as to the semantics of the component sub-spans. In contrast, in the LCT corpus the tokens "after", "age", "30" are annotated with the explicit entities and relations to enable more straightforward query generation. \\
+
+\subsubsection{Capturing Relation Semantics}
+Eligibility criteria frequently contain entities which relate to other entities in the form of examples, abbreviations, equivalencies, or explicit lists. Chia uses \textit{Subsumes} relations to denote that one or more entities are a subset, depend on, or are affected by another entity in some way. In many cases however these entities leave significant semantic ambiguity which may complicate query generation. Consider the phrase:
+
+\begin{quote} 
+\centering 
+\textit{"conditions predisposing to dysphagia (eg, gastroesophageal reflux disease [GERD] ...)"}
+\end{quote} 
+
+In this case, "gastroesophageal reflux disease" is an \textit{example} of a condition, while "GERD" is an \textit{abbreviation}. However, both are \textit{Subsumes} relations in the Chia annotation:
+
+\begin{figure}[H]
+  \includegraphics[scale=0.48]{Figures/3_lct_corpus/lct_latex_fig1.png} 
+\label{fig_lct_latex1}
+\end{figure}
+
+\noindent In contrast, in the LCT annotation schema this example would be annotated as:
+
+\begin{figure}[H]
+  \includegraphics[scale=0.5]{Figures/3_lct_corpus/lct_latex_fig2.png} 
+\label{fig_lct_latex2}
+\end{figure}
+
+\vspace{-1cm}
+
+\noindent The LCT annotation uses \textit{Abbrev-Of} and \textit{Example-Of} relations to clearly differentiate relations between "gastroesophageal reflux disease", "GERD", and "conditions predisposing to dysphagia". Additionally, rather than grouping the latter into a single \textit{Condition} entity, the LCT is also much more granular, with the annotation reflecting that dysphagia is a condition patients are hypothetically predisposed to (due to other conditions such as GERD), but not necessarily actively afflicted by. \\
+
+\noindent Another example illustrating the importance of capturing relation semantics can be seen in the following Chia annotations: \\
+
+\begin{center}
+\begin{tabular}{l c c c}
+    (1) & $\underbrace{\text{"type 1 diabetes"}}$ & & $\underbrace{\text{"for at least 1 year"}}$ \\ 
+    & \big\downarrow & & \big\downarrow \\
+    & \textit{Condition} & $\xrightarrow[Has-Temporal]{}$ & \textit{Temporal}
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{l c c c}
+    (2) & $\underbrace{\text{"Acute coronary syndrome"}}$ & & $\underbrace{\text{"in the past 6 months"}}$ \\ 
+    & \big\downarrow & & \big\downarrow \\
+    & \textit{Condition} & $\xrightarrow[Has-Temporal]{}$ & \textit{Temporal}
+\end{tabular}
+\end{center}
+
+\noindent While syntactically similar, the semantics in chronology expressed in the two criteria are different. In (1), "type 1 diabetes for at least 1 year" suggests that the diagnosis of type 1 diabetes mellitus should have occurred at least 1 year prior to the present. In other words, a unit of temporal measurement (1 year), should have passed since initial diagnosis. In contrast, "Acute coronary syndrome in the past 6 months" (2) suggests that a range of dates between the present and a past event (past 6 months), should have passed since the diagnosis. In Chia, however, the same \textit{Has-Temporal} relation is used for both, blurring distinctions between \textit{durations of time} versus \textit{ranges of dates}, potentially leading to errors during query generation.  \\
+
+\noindent In the LCT annotation schema, these would be annotated as (omitting fine-grained entities for brevity): \\
+
+\begin{center}
+\begin{tabular}{l c c c}
+    (1) & $\underbrace{\text{"type 1 diabetes"}}$ & "for" & $\underbrace{\text{"at least 1 year"}}$ \\ 
+    & \big\downarrow & & \big\downarrow \\
+    & \textit{Condition} & $\xrightarrow[Duration]{}$ & \textit{Eq-Comparison} \\[-1ex]
+    & + & & \\
+    & \textit{Condition-Name} & &
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{l c c c}
+    (2) & $\underbrace{\text{"Acute coronary syndrome"}}$ & "in the" & $\underbrace{\text{"past 6 months"}}$ \\ 
+    & \big\downarrow & & \big\downarrow \\
+    & \textit{Condition} & $\xrightarrow[Temporality]{}$ & \textit{Eq-Comparison} \\[-1ex]
+    & + & & \\
+    & \textit{Condition-Name} & &
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\noindent The LCT annotations distinguish these types of temporal semantics by using distinct \textit{Duration} and \textit{Temporality} relations, allowing downstream queries to more accurately reflect researcher intent. The LCT corpus also does not include "for" or "in the" as part of the entities.
+
+\subsubsection{Data Model Mapping}
+The Chia annotation schema is mapped to the OMOP Common Data Model \cite{hripcsak2015observational} and is designed to ease integration with other OMOP-related tools and generation of SQL queries on OMOP databases. Chia OMOP-derived entities generally follow the naming convention of OMOP domains and SQL database tables, such as \textit{Person}, \textit{Condition}, \textit{Device} and so on. \\
+
+\noindent The LCT annotation schema takes a different approach by intentionally avoiding direct mappings to data models. This approach was chosen to (1) allow the annotation entities and relations flexibility to be transformed to any data model (including but not limited to OMOP) and (2) provide flexibility in capturing criteria important to the task of query generation, even when such criteria are not represented in OMOP. \\
+
+\noindent A disadvantage of directly coupling an annotation schema to a data model is evidenced by criteria such as:
+
+\begin{quote} 
+\centering 
+\textit{"Males aged 18 years and above"}
+\end{quote}
+
+\noindent In Chia, spans related to gender and age share the same \textit{Person} entity: \\
+
+\begin{center}
+\begin{tabular}{c c c c c c c}
+    "Males" & "aged" & & \multicolumn{4}{c}{$\underbrace{\text{"18 years or above"}}$} \\ 
+    \big\downarrow & \big\downarrow & & \multicolumn{4}{c}{\big\downarrow}  \\
+    \textit{Person} &\textit{Person} & $\xrightarrow[Has\_value]{}$ & \multicolumn{4}{c}{\textit{Value}} \\
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\noindent The use of the Chia \textit{Person} entity across gender and age results in loss of information and complications for query generation. As with quantitative and temporal annotations, the generic \textit{Person} entity again forces the burden of normalization and additional parsing to downstream applications. In contrast, this example would be annotated first using general entities and relations in the LCT annotation schema: \\
+
+\begin{center}
+\begin{tabular}{c c c c c c c c}
+    "Males" & "aged" & & \multicolumn{4}{c}{$\underbrace{\text{"18 years or above"}}$} \\ 
+    \big\downarrow & \big\downarrow & & \multicolumn{4}{c}{\big\downarrow}  \\
+    \textit{Life-Stage-And-Gender[male]} &\textit{Age} & $\xrightarrow[Numeric-Filter]{}$ & \multicolumn{4}{c}{\textit{Eq-Comparison}} \\
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\noindent Followed by fine-grained entities and values: \\
+
+\begin{center}
+\begin{tabular}{llll}
+    \multirow{3}{6em}[-3pt]{\textit{\mbox{Eq-Comparison}}} & \multirow{3}{1em}[0pt]{$\begin{cases}\\\\\\\end{cases}$} & $\xrightarrow[Value]{}$ & \textit{Eq-Value "18"} \\
+    & & $\xrightarrow[Temporal-Unit]{}$ & \textit{Eq-Temporal-Unit[year]} "years" \\
+    & & $\xrightarrow[Operator]{}$ & \textit{Eq-Operator[GTEQ]} "or above" \\
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\noindent The LCT annotation captures the male and age spans as distinguishable entities, closely preserving the semantics of the original text. 
 
 \subsection{Annotation process}
 
@@ -188,9 +321,11 @@ Inter-annotator agreement was calculated using F\textsubscript{1} scoring for en
 Initial inter-annotator agreement using the 20 training documents was 76.1\% for entities and 60.3\% for relations. Inter-annotator agreement improved slightly to 78.1\% (+2\%) for entities and 60.9\% (+0.6\%) for relations in the 99 additional double-annotated documents, indicating reasonably high annotator agreement considering the complexity of the annotation task.
 
 \section{Evaluation}
-To evaluate baseline predictive performance on the LCT corpus, we first created a randomly assigned 80/20 split of the corpus, with 804 documents used for the training set and 202 for the test set. For entity prediction, we trained NER models using biLSTM+CRF and BERT \cite{devlin2018bert} neural architectures. For BERT-based prediction, we used two pretrained models trained on published medical texts, SciBERT \cite{beltagy2019scibert} and PubMedBERT \cite{gu2021domain}. For both biLSTM+CRF and BERT predictions, we trained one model to predict general entities and another for fine-grained entities. 
+To evaluate baseline predictive performance on the LCT corpus, we first created a randomly assigned 80/20 split of the corpus, with 804 documents used for the training set and 202 for the test set. For entity prediction, we trained NER models using biLSTM+CRF and BERT \cite{devlin2018bert} neural architectures. For BERT-based prediction, we used two pretrained models trained on published medical texts, SciBERT \cite{beltagy2019scibert} and PubMedBERT \cite{gu2021domain}. We chose these models as both had been shown to perform reasonably well for various tasks related to biomedical NLP. For both biLSTM+CRF and BERT predictions, we trained one model to predict general entities and another for fine-grained entities. 
 
-For relation extraction, we evaluated SciBERT for sequence classification as well as a modified BERT architecture, R-BERT, following methods developed by Wu \& He \cite{wu2019enriching}, also using the pretrained SciBERT model. Table \ref{tbl_hyperparams} shows hyperparameters used for each task.
+For relation extraction, we evaluated SciBERT for sequence classification as well as a modified BERT architecture, R-BERT, following methods developed by Wu \& He \cite{wu2019enriching}, also using the pretrained SciBERT model. The R-BERT architecture expects additional tokens in a given text input, [E1] and [E2], to signal the named entities between which to predict a relation. R-BERT modifies the BERT architecture by then deriving a vector representation of each entity using the average of their respective vectors in the BERT final hidden state, then applies a fully connected layer and softmax layer upon the concatenated entity vectors to predict a relation.
+
+Table \ref{tbl_hyperparams} shows hyperparameters used for each task.
 
 \def\arraystretch{1.2}
 \begin{table}[h!]
@@ -244,6 +379,8 @@ Results of the experiments when training on both the manually and semi-automatic
 
 \section{Limitations}
 The LCT corpus is designed as a granular and robust resource of annotated eligibility criteria to enable models for entity and relation prediction as means of query generation. The corpus does have a number of limitations however which should be recognized. First, the corpus is largely singly annotated, with 119 of 1,006 documents (11\%) double annotated and reconciled, while double annotation is generally considered to be the gold standard in the NLP research community. However, the reasonably high F\textsubscript{1} score from experiments to evaluate NER when training on the singly annotated portion of the corpus suggests relative consistency of annotation across both single and double annotated documents. Additionally, entities in roughly half of the LCT corpus (493 documents) were automatically predicted, then manually corrected. This can potentially lead to data bias if predicted entities are not thoroughly reviewed and corrected by human annotators. Similar results from our experiments to detect differences in performance by training on the manually annotated portion versus the semi-automatically annotated portion (F\textsubscript{1} scores of 78.6\% and 80.0\%) suggest this may not be a significant issue.
+
+While we hypothesize that the demonstrated granularity of the LCT annotation schema facilitates more accurate query generation, this is difficult to measure empirically. One reason for this is that the LCT corpus is designed to enable rule-based query generation, but the accuracy of generated queries depends also on the specific rules used, which may vary among researchers. Further, as the LCT named entities and relations vary from those of other corpora such as Chia, it follows that any rule-based system using LCT models would likely be designed to handle LCT entities and relations specifically. One possible approach would be to have one or more researchers create rule-based systems for query generation based on LCT entities and relations, as well as other corpora, then measure performance based on actual versus expected patients, using a data model such as that of MIMIC-3. This kind of approach however would still be challenging, as rule-development would likely be time-consuming and costly, and researchers participating may not be representative of the general NLP researcher population.
 
 \section{Summary}
 We created the LCT corpus, a gold standard human-annotated corpus of highly granular clinical trial eligibility criteria annotations. The NER and relation extraction models trained on this corpus achieved high performance and enable our subsequent aims.

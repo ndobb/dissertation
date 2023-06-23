@@ -104,7 +104,7 @@ Following earlier work on task-oriented dialog semantic parsing structures in th
 
 \section{Results}
 
-We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{tbl_llf_corpus}. 
+We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus to fine-tune the pretrained T5$_{base}$ model using combinations of these syntax styles. We call our gold standard annotated logical form syntax and augmented text inputs "Standard" style. Example inputs, outputs, and training results are shown in Table \ref{tbl_llf_corpus}. 
 
 \begin{table}[!ht]
     \footnotesize
@@ -114,7 +114,7 @@ We used a randomly sorted 70/20/10 train/test/validation split of the LFF corpus
     \label{tbl_llf_corpus}
 \end{table} 
 
-We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. Replacing raw tokens with function names corresponding to named entities also significantly improved performance (+14.7\%, comparing raw text to Standard input styles), demonstrating that leveraging the LCT corpus to generate augmented text achieved relatively high performance ($>$ 93\% BLEU score) for this task. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for this project.
+We found that our Standard logical forms achieved the highest performance using both BLEU \cite{lin2004rouge} and ROUGE-L \cite{callison2006re} scores, two commonly used metrics in measuring Seq2Seq performance. As can be seen in comparing rows 1 and 2 on Table \ref{tbl_llf_corpus}, using our "augmented text" as input (i.e., replacing raw tokens with function names corresponding to named entities, row two) significantly improved performance, with a BLEU score +14.7\% higher as compared to raw text as input. As it was the highest-performing syntax style and also the most straightforward to parse, we chose to use the Standard logical form style as our IR for this project.
 
 \section{Summary}
 We created the LLF corpus, a gold standard human-annotated corpus of 2,000 eligibility criteria and corresponding logical forms. The LLF syntax was developed based on study of past work and entities and relations present in the LCT corpus. Our best performing prediction method using a fine-tuned T5 model achieved $>$ 93\% BLEU score.
