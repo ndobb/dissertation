@@ -1,4 +1,1 @@
-- Trevor's comments/annotated file
-- Fei: more info about SMM logic
-- Nina: more info why 7 diseases chosen
-- Trevor: explanation about Leaf for unfamiliar readers
+- Importance (or not) of BLEU/ROUGE to Seq2Seq task

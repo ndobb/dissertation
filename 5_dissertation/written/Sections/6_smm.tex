@@ -90,7 +90,7 @@ In this case, $code$ would be tagged with 3 conditional SABs, ICD-9, ICD-10, and
 \label{fig_leafai_smm}
 \end{figure}
 
-The use of UMLS concepts, SABs, and optional conditions for each enables query generation across a wide variety of potential data models and database schema. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where there is more than one means of querying a given concept (e.g., two SQL tables for diagnosis codes), the SMM returns both tables, which may be combined in a UNION statement downstream. The query generation algorithm using an SMM is shown in Algorithm \ref{alg_smm}. SQL queries for the "Tall Table Structure" (left example) in Figure \ref{fig_leafai_smm} would be generated using the $directSqlSets$ array in Algorithm \ref{alg_smm}, while the "Pivoted Table Structure" (right example) would be generated using $encodedSqlSets$. As the algorithm checks for mappings in both cases at runtime, the algorithm does not need to be recompiled to handle different database structures.
+The use of UMLS concepts, SABs, and optional conditions for each enables query generation across a wide variety of potential data models and database schema. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where there is more than one means of querying a given concept (e.g., two SQL tables for diagnosis codes), the SMM returns both tables, which may be combined in a UNION statement downstream. The query generation algorithm for SMMs is shown in Algorithm \ref{alg_smm}. SQL queries for the "Tall Table Structure" (left example) in Figure \ref{fig_leafai_smm} would be generated using the $directSqlSets$ array in Algorithm \ref{alg_smm}, while the "Pivoted Table Structure" (right example) would be generated using $encodedSqlSets$. As the algorithm checks for mappings in both cases at runtime, the algorithm does not need to be recompiled to handle different database structures.
 
 \SetKwComment{Comment}{/* }{ */}
 
@@ -119,7 +119,7 @@ $encodedSqlSets \gets []$ \Comment*[l]{SQL from DB columns which encode SABs}
         }
 }
 $\textbf{return}$ $directSqlSets \cup encodedSqlSets$\;
-\caption{Algorithm for generating SQL queries by mapping concepts for a given logical form and SMM. Actual SQL syntax generation steps and certain steps are omitted for brevity. Each concept within a logical form is evaluated for direct mappings to SMM columns within a database and encodable mappings to SABs. $SMM.columns$ and $SMM.sabs$ are dictionaries of UMLS concepts which return zero or one database columns.}\label{alg_smm}
+\caption{Algorithm for generating SQL queries by mapping concepts for a given logical form and SMM. Actual SQL syntax generation steps and certain steps are omitted for brevity. Each concept within a logical form is evaluated for direct mappings to SMM columns within a database and encodable mappings to SABs. $SMM.columns$ and $SMM.sabs$ are dictionaries of UMLS concepts which return zero or one database columns. The SQL Set objects in $directSqlSets$ and $encodedSqlSets$ are not strings but rather strongly typed objects representing a single SQL statement. Actual SQL compilation is performed in a subsequent process.}\label{alg_smm}
 \end{algorithm}
 
 \section{Limitations}
