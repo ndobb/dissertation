@@ -84,17 +84,47 @@ In this case, $code$ would be tagged with 3 conditional SABs, ICD-9, ICD-10, and
 \label{tbl_smm_column_config}
 \end{table}
 
-The use of UMLS concepts, SABs, and optional conditions for each enables query generation across a wide variety of potential data models and database schema. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where there is more than one means of querying a given concept (e.g., two SQL tables for diagnosis codes), the SMM returns both tables, which may be combined in a UNION statement downstream.
-
-\begin{figure}[h!]
+\begin{figure}[H]
   \includegraphics[scale=0.47]{Figures/6_smm/leafai_smm.pdf}  
 \caption{Two hypothetical database schema to generate queries for platelet counts (shown in logical form after normalization). This example illustrates the flexibility of our SMM system (represented here in JSON format) in adapting to virtually any data model. On the left, "Tall Table Structure", platelet counts must be filtered from within a general purpose "labs" table. Our KB recognizes that labs may be stored as LOINC codes and the corresponding SMM indicates that records in this table can be filtered to LOINC values. On the right, "Pivoted Table Structure", platelet counts are stored as a specific column in a "complete\_blood\_counts" table, and thus can be directly queried without further filtering. Additional metadata, columns, tables, types and so on needed in SMMs are omitted for brevity.}
 \label{fig_leafai_smm}
 \end{figure}
 
+The use of UMLS concepts, SABs, and optional conditions for each enables query generation across a wide variety of potential data models and database schema. An example of this can be seen in Figure \ref{fig_leafai_smm}, which shows strategies by which a given criterion can be used to generate schema-specific queries by leveraging different SMMs. In cases where there is more than one means of querying a given concept (e.g., two SQL tables for diagnosis codes), the SMM returns both tables, which may be combined in a UNION statement downstream. The query generation algorithm using an SMM is shown in Algorithm \ref{alg_smm}. SQL queries for the "Tall Table Structure" (left example) in Figure \ref{fig_leafai_smm} would be generated using the $directSqlSets$ array in Algorithm \ref{alg_smm}, while the "Pivoted Table Structure" (right example) would be generated using $encodedSqlSets$. As the algorithm checks for mappings in both cases at runtime, the algorithm does not need to be recompiled to handle different database structures.
+
+\SetKwComment{Comment}{/* }{ */}
+
+\begin{algorithm}
+%\KwData{$LogicalForm$}
+%\KwData{$SMM$}
+\DontPrintSemicolon
+%\BlankLine
+$directSqlSets \gets []$ \Comment*[l]{SQL from DB columns mapped to specific CUIs}
+$encodedSqlSets \gets []$ \Comment*[l]{SQL from DB columns which encode SABs}
+\BlankLine
+\For{$concept$ in $LogicalForm.concepts$}{
+    \BlankLine
+    \If{$concept$ in $SMM.columns$}{
+        $column \gets SMM.columns[concept]$\;
+        $sql \gets GenerateConceptSql(concept, column)$\;
+        $directSqlSets.push(sql)$\;
+    }
+    \BlankLine
+    \For{$sab$ in $SMM.sabs$}{
+          \If{$concept$ encodable as $sab$}{
+            $column \gets SMM.sabs[concept]$\;
+            $sql \gets GenerateEncodedSabSql(concept, column)$\;
+            $encodedSqlSets.push(sql)$\;
+          }
+        }
+}
+$\textbf{return}$ $directSqlSets \cup encodedSqlSets$\;
+\caption{Algorithm for generating SQL queries by mapping concepts for a given logical form and SMM. Actual SQL syntax generation steps and certain steps are omitted for brevity. Each concept within a logical form is evaluated for direct mappings to SMM columns within a database and encodable mappings to SABs. $SMM.columns$ and $SMM.sabs$ are dictionaries of UMLS concepts which return zero or one database columns.}\label{alg_smm}
+\end{algorithm}
+
 \section{Limitations}
 
-Our SMM implementation is limited in a number of ways, most notably in that our tagging schema is not entirely machine readable. Specifically, the use of optional conditions in the form of SQL WHERE clauses implemented as simple strings (e.g., "WHERE IsPrimaryDx = 1") means that an SMM does not carry granular semantic information of actual filtering logic or tuple-level values, but rather simply trusts that a given SQL condition will filter as expected. A more robust SMM representation may perhaps annotate tuple-level values semantically at a more granular level, though this would necessarily entail far more work on the part of the annotator in exhaustively describing every possible value of every column in a database.
+Our SMM implementation is limited in a number of ways, most notably in that our tagging schema is not entirely machine readable. Specifically, the use of optional conditions in the form of SQL WHERE clauses implemented as simple strings (e.g., "WHERE IsPrimaryDx = 1") means that an SMM does not carry granular semantic information of actual filtering logic or tuple-level values, but rather simply trusts that a given SQL condition will filter as expected. A more robust future SMM implementation may annotate tuple-level values semantically at a more granular level, though this would necessarily entail far more work on the part of the annotator in exhaustively describing every possible value of every relevant column in a database.
 
 \section{Summary}
 
